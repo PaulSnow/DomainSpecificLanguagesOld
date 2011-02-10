@@ -92,10 +92,10 @@ terminal String		ABSOLUTEVALUE, ACTION, ADD, AFTER, ALL, ALLOWING, AND, ARRAY,
 					CURRENT_TIMESTAMP, CVS, DATE, DAYS, DEBUG, DECIMAL_PLACES, 
 					DECREMENT, DEEPCOPY, DESCENDINGORDER, DIVIDE, DOES, DOUBLE, 
 					EACH, EARLIEST, ELEMENT, ELSE, ELSEIF, ELSEIFNONEAREFOUND, 
-					END, ENDIF, ENTITY, EQ, EQUAL, FIRST, FLOAT, FOR, 
-					FORALL, FROM, GET, GREATER, GT, GTE, HASA, HAVE, IF, IN, 
+					END, ENDIF, ENTITY, EQ, FIRST, FLOAT, FOR, 
+					FORALL, FROM, GET, GT, GTE, HASA, HAVE, IF, IN, 
 					INCLUDE, INCLUDES, INCREMENT, INDEX_OF, INTEGER, IS, 
-					ISNOTNULL, ISNULL,	ITS, LBRACE, LCURLY, LENGTH, LESS, 
+					ISNOTNULL, ISNULL,	ITS, LBRACE, LCURLY, LENGTH, 
 					LOCAL, LONG, LOWER_CASE, LPAREN,  LT, LTE, MAP, MAPPINGKEY, MATCH, 
 					MATCHES, MEMBER, MINUS, MONTHS, MULTIPLY, NAME, 
 					NAMEOF, NEQ, NEW, NO, NOT, NUMBEROF, OF, ON, ONE, ONERROR, 
@@ -106,7 +106,7 @@ terminal String		ABSOLUTEVALUE, ACTION, ADD, AFTER, ALL, ALLOWING, AND, ARRAY,
 					RINVALID, RLONG, RNAME, RNULL, ROPERATOR, ROUNDED, RPAREN, 
 					RSTRING, RTABLE, RXMLVALUE, SEMI, SET, SORT, STARTS_WITH,  
 					STRING, SUBSTRING, SUBTRACT, SUM_OF, TABLE, TABLEINFORMATION, 
-					THAN, THEN,	THENAME, THERE, THIS, TIMES, THROUGH, TO, 
+					THEN, THENAME, THERE, THIS, TIMES, THROUGH, TO, 
 					TOBEREMOVED,
 					TOKENIZE, TRIM, UMINUS, UNDEFINED, UPPER_CASE, USING, VALUE, 
 					WAS, WHERE, WITHIN, WITH_BOUNDRY, YEARS, YEAROF; 
@@ -115,7 +115,6 @@ terminal String		IDENT; 	// This one is used by the Lexical Analyzer, so it is
 							// unreferrenced in the parser.  We still need it.
 							
 /* Non terminals */
-non terminal String     eq, neq, gt,gte,lt,lte;
 
 non terminal String     done, statement_list, statement;
 non terminal String     number; 
@@ -188,7 +187,7 @@ precedence left EQ,NEQ,GT,LT,GTE,LTE,ISNULL,ISNOTNULL;
 precedence right ROUNDED, TO;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
-precedence left IS, NOT, EQUAL, UMINUS, LPAREN, RPAREN, TRIM, STRING;
+precedence left IS, NOT, UMINUS, LPAREN, RPAREN, TRIM, STRING;
 precedence left USING, POSSESSIVE, COLON;
  
 
@@ -952,58 +951,58 @@ bexpr     ::=
               fexpr:n1 IS PLUSORMINUS number:err OF fexpr:n2           
                       {: RESULT = n2+err+n1+                          ">r >r >r i j f- k f< r> r> f+ r> f> and ";   :}
               |
-              iexpr:e1 eq iexpr:e2     {: RESULT = e1+e2+"== "; :}
+              iexpr:e1 EQ iexpr:e2     {: RESULT = e1+e2+"== "; :}
               |
-              fexpr:e1 eq iexpr:e2     {: RESULT = e1+e2+"f== "; :}
+              fexpr:e1 EQ iexpr:e2     {: RESULT = e1+e2+"f== "; :}
               |
-              iexpr:e1 eq fexpr:e2     {: RESULT = e1+e2+"f== "; :}
+              iexpr:e1 EQ fexpr:e2     {: RESULT = e1+e2+"f== "; :}
               |
-              fexpr:e1 eq fexpr:e2     {: RESULT = e1+e2+"f== "; :}
+              fexpr:e1 EQ fexpr:e2     {: RESULT = e1+e2+"f== "; :}
               |
               
-              iexpr:e1 neq iexpr:e2     {: RESULT = e1+e2+"== not "; :}
+              iexpr:e1 NEQ iexpr:e2     {: RESULT = e1+e2+"== not "; :}
               |
-              fexpr:e1 neq iexpr:e2     {: RESULT = e1+e2+"f== not "; :}
+              fexpr:e1 NEQ iexpr:e2     {: RESULT = e1+e2+"f== not "; :}
               |
-              iexpr:e1 neq fexpr:e2     {: RESULT = e1+e2+"f== not "; :}
+              iexpr:e1 NEQ fexpr:e2     {: RESULT = e1+e2+"f== not "; :}
               |
-              fexpr:e1 neq fexpr:e2     {: RESULT = e1+e2+"f== not "; :}
+              fexpr:e1 NEQ fexpr:e2     {: RESULT = e1+e2+"f== not "; :}
               |
 
-              iexpr:e1 gt iexpr:e2     {: RESULT = e1+e2+"> "; :}
+              iexpr:e1 GT iexpr:e2     {: RESULT = e1+e2+"> "; :}
               |
-              fexpr:e1 gt iexpr:e2     {: RESULT = e1+e2+"f> "; :}
+              fexpr:e1 GT iexpr:e2     {: RESULT = e1+e2+"f> "; :}
               |
-              iexpr:e1 gt fexpr:e2     {: RESULT = e1+e2+"f> "; :}
+              iexpr:e1 GT fexpr:e2     {: RESULT = e1+e2+"f> "; :}
               |
-              fexpr:e1 gt fexpr:e2     {: RESULT = e1+e2+"f> "; :}
+              fexpr:e1 GT fexpr:e2     {: RESULT = e1+e2+"f> "; :}
               | 
 
-              iexpr:e1 gte iexpr:e2    {: RESULT = e1+e2+">= "; :}
+              iexpr:e1 GTE iexpr:e2    {: RESULT = e1+e2+">= "; :}
               |
-              fexpr:e1 gte iexpr:e2    {: RESULT = e1+e2+"f>= "; :}
+              fexpr:e1 GTE iexpr:e2    {: RESULT = e1+e2+"f>= "; :}
               |
-              iexpr:e1 gte fexpr:e2    {: RESULT = e1+e2+"f>= "; :}
+              iexpr:e1 GTE fexpr:e2    {: RESULT = e1+e2+"f>= "; :}
               |
-              fexpr:e1 gte fexpr:e2    {: RESULT = e1+e2+"f>= "; :}
+              fexpr:e1 GTE fexpr:e2    {: RESULT = e1+e2+"f>= "; :}
               |
 
-              iexpr:e1 lt iexpr:e2     {: RESULT = e1+e2+"< "; :}
+              iexpr:e1 LT iexpr:e2     {: RESULT = e1+e2+"< "; :}
               |
-              fexpr:e1 lt iexpr:e2     {: RESULT = e1+e2+"f< "; :}
+              fexpr:e1 LT iexpr:e2     {: RESULT = e1+e2+"f< "; :}
               |
-              iexpr:e1 lt fexpr:e2     {: RESULT = e1+e2+"f< "; :}
+              iexpr:e1 LT fexpr:e2     {: RESULT = e1+e2+"f< "; :}
               |
-              fexpr:e1 lt fexpr:e2     {: RESULT = e1+e2+"f< "; :}
+              fexpr:e1 LT fexpr:e2     {: RESULT = e1+e2+"f< "; :}
               | 
 
-              iexpr:e1 lte iexpr:e2    {: RESULT = e1+e2+"<= "; :}
+              iexpr:e1 LTE iexpr:e2    {: RESULT = e1+e2+"<= "; :}
               |
-              fexpr:e1 lte iexpr:e2    {: RESULT = e1+e2+"f<= "; :}
+              fexpr:e1 LTE iexpr:e2    {: RESULT = e1+e2+"f<= "; :}
               |
-              iexpr:e1 lte fexpr:e2    {: RESULT = e1+e2+"f<= "; :}
+              iexpr:e1 LTE fexpr:e2    {: RESULT = e1+e2+"f<= "; :}
               |
-              fexpr:e1 lte fexpr:e2    {: RESULT = e1+e2+"f<= "; :}
+              fexpr:e1 LTE fexpr:e2    {: RESULT = e1+e2+"f<= "; :}
               |
     
               RBOOLEAN:e1              {: RESULT = e1+" "; :}
@@ -1012,22 +1011,22 @@ bexpr     ::=
               
 // Names
               |
-              nexpr:n1 eq nexpr:n2     {: RESULT = n1+n2+"nameeq "; :}
+              nexpr:n1 EQ nexpr:n2     {: RESULT = n1+n2+"nameeq "; :}
               | 
-              nexpr:n  eq strexpr:s    {: RESULT = n+s+"streq "; :}
+              nexpr:n  EQ strexpr:s    {: RESULT = n+s+"streq "; :}
               |
 
-              nexpr:n1 neq nexpr:n2     {: RESULT = n1+n2+"nameeq not "; :}
+              nexpr:n1 NEQ nexpr:n2     {: RESULT = n1+n2+"nameeq not "; :}
               | 
-              nexpr:n  neq strexpr:s    {: RESULT = n+s+"streq not "; :}
+              nexpr:n  NEQ strexpr:s    {: RESULT = n+s+"streq not "; :}
               |
 
 // Strings
-              strexpr:s eq blist:bl      {: RESULT = s+bl+"swap drop ";        :}
+              strexpr:s EQ blist:bl      {: RESULT = s+bl+"swap drop ";        :}
               |              
-              strexpr:s1 eq  strexpr:s2  {: RESULT = s1+s2+"streq ";           :}
+              strexpr:s1 EQ  strexpr:s2  {: RESULT = s1+s2+"streq ";           :}
               |
-              strexpr:s1 neq strexpr:s2  {: RESULT = s1+s2+"streq not ";       :}
+              strexpr:s1 NEQ strexpr:s2  {: RESULT = s1+s2+"streq not ";       :}
               |
               strexpr:s1 AT iexpr:e1 STARTS_WITH strexpr:s2
                                          {: RESULT = s1+s2+e1+"startswith ";   :}
@@ -1048,19 +1047,19 @@ bexpr     ::=
               WAS bexpr:e QUESTIONMARK   {: RESULT = e; :}
               |
 // String Compares
-              strexpr:s1 gt strexpr:s2                      {: RESULT = s1+s2+"s> ";    :} |
-              strexpr:s1 lt strexpr:s2                      {: RESULT = s1+s2+"s< "; 	:} |
-              strexpr:s1 gte strexpr:s2                      {: RESULT = s1+s2+"s>= ";  :} |
-              strexpr:s1 lte strexpr:s2                      {: RESULT = s1+s2+"s<= "; 	:} |
+              strexpr:s1 GT strexpr:s2                      {: RESULT = s1+s2+"s> ";    :} |
+              strexpr:s1 LT strexpr:s2                      {: RESULT = s1+s2+"s< "; 	:} |
+              strexpr:s1 GTE strexpr:s2                      {: RESULT = s1+s2+"s>= ";  :} |
+              strexpr:s1 LTE strexpr:s2                      {: RESULT = s1+s2+"s<= "; 	:} |
 
 // Regex Compare
               strexpr:s1 MATCHES strexpr:e1           {: RESULT = e1+s1+"regexmatch "; :} 
               |
 
 // Boolean tests
-              bexpr:e1 eq bexpr:e2     {: RESULT = e1+e2+"beq "; :}
+              bexpr:e1 EQ bexpr:e2     {: RESULT = e1+e2+"beq "; :}
               |
-              bexpr:e1 neq bexpr:e2    {: RESULT = e1+e2+"beq "; :}
+              bexpr:e1 NEQ bexpr:e2    {: RESULT = e1+e2+"beq "; :}
               |
               bexpr:e1 AND bexpr:e2    {: RESULT = e1+"{ pop "+e2+"} over if\n"; :} 
               |
@@ -1109,18 +1108,18 @@ bexpr     ::=
               |
  
 // Date Compares
-              dexpr:d1 eq dexpr:d2                      {: RESULT = d1+d2+"d== ";                           	:} |
-              dexpr:d1 lt dexpr:d2                      {: RESULT = d1+d2+"d< "; 								:} |		
+              dexpr:d1 EQ dexpr:d2                      {: RESULT = d1+d2+"d== ";                           	:} |
+              dexpr:d1 LT dexpr:d2                      {: RESULT = d1+d2+"d< "; 								:} |		
               dexpr:d1 IS BEFORE dexpr:d2               {: RESULT = d1+d2+"d< "; 								:} |
-              dexpr:d1 gt dexpr:d2                      {: RESULT = d1+d2+"d> ";                             	:} |
+              dexpr:d1 GT dexpr:d2                      {: RESULT = d1+d2+"d> ";                             	:} |
               dexpr:d1 IS AFTER dexpr:d2                {: RESULT = d1+d2+"d> "; 								:} |
-              dexpr:d1 gte dexpr:d2                     {: RESULT = d1+d2+"d< not ";                          	:} |
-              dexpr:d1 lte dexpr:d2                     {: RESULT = d1+d2+"d> not ";                          	:} |
+              dexpr:d1 GTE dexpr:d2                     {: RESULT = d1+d2+"d< not ";                          	:} |
+              dexpr:d1 LTE dexpr:d2                     {: RESULT = d1+d2+"d> not ";                          	:} |
               dexpr:d1 IS BETWEEN dexpr:d2 AND dexpr:d3 {: RESULT = d2+d1+"d> not "+d1+d3+" d> not and ";       :} |
 
 // Entity Compares
-              eexpr:e1 eq  eexpr:e2                      {: RESULT = e1+e2+"req  ";                                :} |
-              eexpr:e1 neq eexpr:e2                      {: RESULT = e1+e2+"req not ";                             :} |
+              eexpr:e1 EQ  eexpr:e2                      {: RESULT = e1+e2+"req  ";                                :} |
+              eexpr:e1 NEQ eexpr:e2                      {: RESULT = e1+e2+"req not ";                             :} |
               // EntityX is in the context
 
               RENTITY:e ENTITY IS NOT IN CONTEXT         {: RESULT = "/"+e+" InContext not ";                     :} |   
@@ -1134,11 +1133,4 @@ bexpr     ::=
 
               BOOL_FUNCTION:b                            {: RESULT = b+" ";                                        :} ;                                                      
 
-
-eq    ::=     EQ  | IS EQUAL TO                 | EQUAL TO ;
-neq   ::=     NEQ | IS NOT EQUAL TO             | NOT EQUAL TO ;
-gt    ::=     GT  | IS GREATER THAN             | GREATER THAN ;
-gte   ::=     GTE | IS GREATER THAN OR EQUAL TO | GREATER THAN OR EQUAL TO ;
-lt    ::=     LT  | IS LESS THAN                | LESS THAN ;
-lte   ::=     LTE | IS LESS THAN OR EQUAL TO    | LESS THAN OR EQUAL TO ;
 

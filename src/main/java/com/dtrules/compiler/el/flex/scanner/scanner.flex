@@ -124,18 +124,28 @@ string     = {stringdbl}|{stringsgl}
   "=="             {return build(sym.EQ); }
   "!="             {return build(sym.NEQ); }
   "="              {return build(sym.ASSIGN); }
-  "equal"          {return build(sym.EQUAL); }
   "to"             {return build(sym.TO); }
   "is"             {return build(sym.IS); }
   "are"            {return build(sym.IS); }
   "its"            {return build(sym.ITS); }
-  "greater"        {return build(sym.GREATER); }
-  "less"           {return build(sym.LESS); }
-  "than"           {return build(sym.THAN); }
   ">"|"&gt"        {return build(sym.GT); }
   "<"|"&lt"        {return build(sym.LT); }
   ">="|"&gt="      {return build(sym.GTE); }
   "<="|"&lt="      {return build(sym.LTE); }
+  
+  "is"{ws}+"equal"{ws}+"to"                                      {return build(sym.EQ);}
+  "equal"{ws}+"to"                                               {return build(sym.EQ);}
+  "is"{ws}+"not"{ws}+"equal"{ws}+"to"                            {return build(sym.NEQ);}
+  "not"{ws}+"equal"{ws}+"to"                                     {return build(sym.NEQ);}
+  "is"{ws}+"greater"{ws}+"than"                                  {return build(sym.GT);}
+  "greater"{ws}+"than"                                           {return build(sym.GT);}
+  "is"{ws}+"greater"{ws}+"than"{ws}+"or"{ws}+"equal"+{ws}+"to"   {return build(sym.GTE);}
+  "greater"{ws}+"than"{ws}+"or"{ws}+"equal"+{ws}+"to"            {return build(sym.GTE);}
+  "is"{ws}+"less"{ws}+"than"                                     {return build(sym.LT);}
+  "less"{ws}+"than"                                              {return build(sym.LT);}
+  "is"{ws}+"less"{ws}+"than"{ws}+"or"{ws}+"equal"+{ws}+"to"      {return build(sym.LTE);}
+  "less"{ws}+"than"{ws}+"or"{ws}+"equal"+{ws}+"to"               {return build(sym.LTE);}
+  
   "and"            {return build(sym.AND); }
   "&&"             {return build(sym.AND); }
   "or"             {return build(sym.OR); }

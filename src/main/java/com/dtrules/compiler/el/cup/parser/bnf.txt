@@ -24,46 +24,44 @@
 [35]DECREMENT [36]DEEPCOPY [37]DESCENDINGORDER [38]DIVIDE [39]DOES 
 [40]DOUBLE [41]EACH [42]EARLIEST [43]ELEMENT [44]ELSE 
 [45]ELSEIF [46]ELSEIFNONEAREFOUND [47]END [48]ENDIF [49]ENTITY 
-[50]EQ [51]EQUAL [52]FIRST [53]FLOAT [54]FOR 
-[55]FORALL [56]FROM [57]GET [58]GREATER [59]GT 
-[60]GTE [61]HASA [62]HAVE [63]IF [64]IN 
-[65]INCLUDE [66]INCLUDES [67]INCREMENT [68]INDEX_OF [69]INTEGER 
-[70]IS [71]ISNOTNULL [72]ISNULL [73]ITS [74]LBRACE 
-[75]LCURLY [76]LENGTH [77]LESS [78]LOCAL [79]LONG 
-[80]LOWER_CASE [81]LPAREN [82]LT [83]LTE [84]MAP 
-[85]MAPPINGKEY [86]MATCH [87]MATCHES [88]MEMBER [89]MINUS 
-[90]MONTHS [91]MULTIPLY [92]NAME [93]NAMEOF [94]NEQ 
-[95]NEW [96]NO [97]NOT [98]NUMBEROF [99]OF 
-[100]ON [101]ONE [102]ONERROR [103]OR [104]PERCENTOF 
-[105]PERFORM [106]PLUS [107]PLUSORMINUS [108]POSSESSIVE [109]QUESTIONMARK 
-[110]RANDOMIZE [111]RARRAY [112]RBOOLEAN [113]RBRACE [114]RCURLY 
-[115]RDATE [116]RDECISIONTABLE [117]RDOUBLE [118]RELATIONSHIP_BETWEEN [119]REMOVE 
-[120]RENTITY [121]RINVALID [122]RLONG [123]RNAME [124]RNULL 
-[125]ROPERATOR [126]ROUNDED [127]RPAREN [128]RSTRING [129]RTABLE 
-[130]RXMLVALUE [131]SEMI [132]SET [133]SORT [134]STARTS_WITH 
-[135]STRING [136]SUBSTRING [137]SUBTRACT [138]SUM_OF [139]TABLE 
-[140]TABLEINFORMATION [141]THAN [142]THEN [143]THENAME [144]THERE 
-[145]THIS [146]TIMES [147]THROUGH [148]TO [149]TOBEREMOVED 
-[150]TOKENIZE [151]TRIM [152]UMINUS [153]UNDEFINED [154]UPPER_CASE 
-[155]USING [156]VALUE [157]WAS [158]WHERE [159]WITHIN 
-[160]WITH_BOUNDRY [161]YEARS [162]YEAROF [163]IDENT 
+[50]EQ [51]FIRST [52]FLOAT [53]FOR [54]FORALL 
+[55]FROM [56]GET [57]GT [58]GTE [59]HASA 
+[60]HAVE [61]IF [62]IN [63]INCLUDE [64]INCLUDES 
+[65]INCREMENT [66]INDEX_OF [67]INTEGER [68]IS [69]ISNOTNULL 
+[70]ISNULL [71]ITS [72]LBRACE [73]LCURLY [74]LENGTH 
+[75]LOCAL [76]LONG [77]LOWER_CASE [78]LPAREN [79]LT 
+[80]LTE [81]MAP [82]MAPPINGKEY [83]MATCH [84]MATCHES 
+[85]MEMBER [86]MINUS [87]MONTHS [88]MULTIPLY [89]NAME 
+[90]NAMEOF [91]NEQ [92]NEW [93]NO [94]NOT 
+[95]NUMBEROF [96]OF [97]ON [98]ONE [99]ONERROR 
+[100]OR [101]PERCENTOF [102]PERFORM [103]PLUS [104]PLUSORMINUS 
+[105]POSSESSIVE [106]QUESTIONMARK [107]RANDOMIZE [108]RARRAY [109]RBOOLEAN 
+[110]RBRACE [111]RCURLY [112]RDATE [113]RDECISIONTABLE [114]RDOUBLE 
+[115]RELATIONSHIP_BETWEEN [116]REMOVE [117]RENTITY [118]RINVALID [119]RLONG 
+[120]RNAME [121]RNULL [122]ROPERATOR [123]ROUNDED [124]RPAREN 
+[125]RSTRING [126]RTABLE [127]RXMLVALUE [128]SEMI [129]SET 
+[130]SORT [131]STARTS_WITH [132]STRING [133]SUBSTRING [134]SUBTRACT 
+[135]SUM_OF [136]TABLE [137]TABLEINFORMATION [138]THEN [139]THENAME 
+[140]THERE [141]THIS [142]TIMES [143]THROUGH [144]TO 
+[145]TOBEREMOVED [146]TOKENIZE [147]TRIM [148]UMINUS [149]UNDEFINED 
+[150]UPPER_CASE [151]USING [152]VALUE [153]WAS [154]WHERE 
+[155]WITHIN [156]WITH_BOUNDRY [157]YEARS [158]YEAROF [159]IDENT 
+
 
 ===== Non terminals =====
-[0]eq [1]neq [2]gt [3]gte [4]lt 
-[5]lte [6]done [7]statement_list [8]statement [9]number 
-[10]inthe [11]iexpr [12]fexpr [13]bexpr [14]eexpr 
-[15]nexpr [16]texpr [17]strexpr [18]indx_expr [19]dexpr 
-[20]array_expr [21]array_expr2 [22]includeSearch [23]forblock [24]forallblock 
-[25]forallctl [26]forfirstctl [27]ifblock [28]usingblock [29]firstblock 
-[30]block [31]thereis [32]setstatement [33]usingstatement [34]performstatement 
-[35]debugstatement [36]ifstatement [37]addtostatement [38]addtodest [39]addtodest2 
-[40]subtodest [41]clearstatement [42]randomstatements [43]commonerror [44]tablelist 
-[45]operatorlist [46]operatorstatements [47]contextstatement [48]localvariables [49]context_for_table 
-[50]datestatement [51]xmlvalues [52]xmlvaluestatements [53]separator [54]blist 
-[55]ifcontinue [56]left_iexpr [57]left_fexpr [58]left_bexpr [59]left_eexpr 
-[60]left_strexpr [61]left_dexpr [62]left_ArrayRef [63]left_texpr [64]colonRef 
-[65]possessiveRef [66]array_lit [67]array_list [68]NT$0 [69]NT$1 
-
+[0]done [1]statement_list [2]statement [3]number [4]inthe 
+[5]iexpr [6]fexpr [7]bexpr [8]eexpr [9]nexpr 
+[10]texpr [11]strexpr [12]indx_expr [13]dexpr [14]array_expr 
+[15]array_expr2 [16]includeSearch [17]forblock [18]forallblock [19]forallctl 
+[20]forfirstctl [21]ifblock [22]usingblock [23]firstblock [24]block 
+[25]thereis [26]setstatement [27]usingstatement [28]performstatement [29]debugstatement 
+[30]ifstatement [31]addtostatement [32]addtodest [33]addtodest2 [34]subtodest 
+[35]clearstatement [36]randomstatements [37]commonerror [38]tablelist [39]operatorlist 
+[40]operatorstatements [41]contextstatement [42]localvariables [43]context_for_table [44]datestatement 
+[45]xmlvalues [46]xmlvaluestatements [47]separator [48]blist [49]ifcontinue 
+[50]left_iexpr [51]left_fexpr [52]left_bexpr [53]left_eexpr [54]left_strexpr 
+[55]left_dexpr [56]left_ArrayRef [57]left_texpr [58]colonRef [59]possessiveRef 
+[60]array_lit [61]array_list [62]NT$0 [63]NT$1 
 
 ===== Productions =====
 [0] done ::= ACTION statement_list 
@@ -473,39 +471,39 @@
 [404] bexpr ::= eexpr IS strexpr OF eexpr 
 [405] bexpr ::= fexpr IS WITHIN number PERCENTOF fexpr 
 [406] bexpr ::= fexpr IS PLUSORMINUS number OF fexpr 
-[407] bexpr ::= iexpr eq iexpr 
-[408] bexpr ::= fexpr eq iexpr 
-[409] bexpr ::= iexpr eq fexpr 
-[410] bexpr ::= fexpr eq fexpr 
-[411] bexpr ::= iexpr neq iexpr 
-[412] bexpr ::= fexpr neq iexpr 
-[413] bexpr ::= iexpr neq fexpr 
-[414] bexpr ::= fexpr neq fexpr 
-[415] bexpr ::= iexpr gt iexpr 
-[416] bexpr ::= fexpr gt iexpr 
-[417] bexpr ::= iexpr gt fexpr 
-[418] bexpr ::= fexpr gt fexpr 
-[419] bexpr ::= iexpr gte iexpr 
-[420] bexpr ::= fexpr gte iexpr 
-[421] bexpr ::= iexpr gte fexpr 
-[422] bexpr ::= fexpr gte fexpr 
-[423] bexpr ::= iexpr lt iexpr 
-[424] bexpr ::= fexpr lt iexpr 
-[425] bexpr ::= iexpr lt fexpr 
-[426] bexpr ::= fexpr lt fexpr 
-[427] bexpr ::= iexpr lte iexpr 
-[428] bexpr ::= fexpr lte iexpr 
-[429] bexpr ::= iexpr lte fexpr 
-[430] bexpr ::= fexpr lte fexpr 
+[407] bexpr ::= iexpr EQ iexpr 
+[408] bexpr ::= fexpr EQ iexpr 
+[409] bexpr ::= iexpr EQ fexpr 
+[410] bexpr ::= fexpr EQ fexpr 
+[411] bexpr ::= iexpr NEQ iexpr 
+[412] bexpr ::= fexpr NEQ iexpr 
+[413] bexpr ::= iexpr NEQ fexpr 
+[414] bexpr ::= fexpr NEQ fexpr 
+[415] bexpr ::= iexpr GT iexpr 
+[416] bexpr ::= fexpr GT iexpr 
+[417] bexpr ::= iexpr GT fexpr 
+[418] bexpr ::= fexpr GT fexpr 
+[419] bexpr ::= iexpr GTE iexpr 
+[420] bexpr ::= fexpr GTE iexpr 
+[421] bexpr ::= iexpr GTE fexpr 
+[422] bexpr ::= fexpr GTE fexpr 
+[423] bexpr ::= iexpr LT iexpr 
+[424] bexpr ::= fexpr LT iexpr 
+[425] bexpr ::= iexpr LT fexpr 
+[426] bexpr ::= fexpr LT fexpr 
+[427] bexpr ::= iexpr LTE iexpr 
+[428] bexpr ::= fexpr LTE iexpr 
+[429] bexpr ::= iexpr LTE fexpr 
+[430] bexpr ::= fexpr LTE fexpr 
 [431] bexpr ::= RBOOLEAN 
 [432] bexpr ::= colonRef RBOOLEAN 
-[433] bexpr ::= nexpr eq nexpr 
-[434] bexpr ::= nexpr eq strexpr 
-[435] bexpr ::= nexpr neq nexpr 
-[436] bexpr ::= nexpr neq strexpr 
-[437] bexpr ::= strexpr eq blist 
-[438] bexpr ::= strexpr eq strexpr 
-[439] bexpr ::= strexpr neq strexpr 
+[433] bexpr ::= nexpr EQ nexpr 
+[434] bexpr ::= nexpr EQ strexpr 
+[435] bexpr ::= nexpr NEQ nexpr 
+[436] bexpr ::= nexpr NEQ strexpr 
+[437] bexpr ::= strexpr EQ blist 
+[438] bexpr ::= strexpr EQ strexpr 
+[439] bexpr ::= strexpr NEQ strexpr 
 [440] bexpr ::= strexpr AT iexpr STARTS_WITH strexpr 
 [441] bexpr ::= strexpr STARTS_WITH strexpr 
 [442] bexpr ::= strexpr IS ONE OF array_expr 
@@ -513,13 +511,13 @@
 [444] bexpr ::= DOES bexpr QUESTIONMARK 
 [445] bexpr ::= IS bexpr QUESTIONMARK 
 [446] bexpr ::= WAS bexpr QUESTIONMARK 
-[447] bexpr ::= strexpr gt strexpr 
-[448] bexpr ::= strexpr lt strexpr 
-[449] bexpr ::= strexpr gte strexpr 
-[450] bexpr ::= strexpr lte strexpr 
+[447] bexpr ::= strexpr GT strexpr 
+[448] bexpr ::= strexpr LT strexpr 
+[449] bexpr ::= strexpr GTE strexpr 
+[450] bexpr ::= strexpr LTE strexpr 
 [451] bexpr ::= strexpr MATCHES strexpr 
-[452] bexpr ::= bexpr eq bexpr 
-[453] bexpr ::= bexpr neq bexpr 
+[452] bexpr ::= bexpr EQ bexpr 
+[453] bexpr ::= bexpr NEQ bexpr 
 [454] bexpr ::= bexpr AND bexpr 
 [455] bexpr ::= bexpr OR bexpr 
 [456] bexpr ::= NOT bexpr 
@@ -540,45 +538,27 @@
 [471] bexpr ::= LPAREN BOOLEAN RPAREN indx_expr 
 [472] bexpr ::= LPAREN BOOLEAN RPAREN strexpr 
 [473] bexpr ::= BOOLEAN RARRAY LBRACE iexpr RBRACE 
-[474] bexpr ::= dexpr eq dexpr 
-[475] bexpr ::= dexpr lt dexpr 
+[474] bexpr ::= dexpr EQ dexpr 
+[475] bexpr ::= dexpr LT dexpr 
 [476] bexpr ::= dexpr IS BEFORE dexpr 
-[477] bexpr ::= dexpr gt dexpr 
+[477] bexpr ::= dexpr GT dexpr 
 [478] bexpr ::= dexpr IS AFTER dexpr 
-[479] bexpr ::= dexpr gte dexpr 
-[480] bexpr ::= dexpr lte dexpr 
+[479] bexpr ::= dexpr GTE dexpr 
+[480] bexpr ::= dexpr LTE dexpr 
 [481] bexpr ::= dexpr IS BETWEEN dexpr AND dexpr 
-[482] bexpr ::= eexpr eq eexpr 
-[483] bexpr ::= eexpr neq eexpr 
+[482] bexpr ::= eexpr EQ eexpr 
+[483] bexpr ::= eexpr NEQ eexpr 
 [484] bexpr ::= RENTITY ENTITY IS NOT IN CONTEXT 
 [485] bexpr ::= RENTITY ENTITY IS IN CONTEXT 
 [486] bexpr ::= strexpr ENTITY IS IN CONTEXT 
 [487] bexpr ::= strexpr ENTITY IS NOT IN CONTEXT 
 [488] bexpr ::= BOOLEAN VALUE OF operatorstatements 
 [489] bexpr ::= BOOL_FUNCTION 
-[490] eq ::= EQ 
-[491] eq ::= IS EQUAL TO 
-[492] eq ::= EQUAL TO 
-[493] neq ::= NEQ 
-[494] neq ::= IS NOT EQUAL TO 
-[495] neq ::= NOT EQUAL TO 
-[496] gt ::= GT 
-[497] gt ::= IS GREATER THAN 
-[498] gt ::= GREATER THAN 
-[499] gte ::= GTE 
-[500] gte ::= IS GREATER THAN OR EQUAL TO 
-[501] gte ::= GREATER THAN OR EQUAL TO 
-[502] lt ::= LT 
-[503] lt ::= IS LESS THAN 
-[504] lt ::= LESS THAN 
-[505] lte ::= LTE 
-[506] lte ::= IS LESS THAN OR EQUAL TO 
-[507] lte ::= LESS THAN OR EQUAL TO 
 
 ------- CUP v0.11a beta 20060608 Parser Generation Summary -------
   0 errors and 0 warnings
-  164 terminals, 70 non-terminals, and 508 productions declared, 
-  producing 1303 unique parse states.
+  160 terminals, 64 non-terminals, and 490 productions declared, 
+  producing 1265 unique parse states.
   0 terminals declared but not used.
   0 non-terminals declared but not used.
   0 productions never reduced.
