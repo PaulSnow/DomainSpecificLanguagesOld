@@ -80,7 +80,7 @@ public class TokenFilter implements Scanner{
                try {
                   IRObject o = session.getState().find(rname);
                   if(o==null)return -1;
-                  return o.type();
+                  return o.type().getId();
                 } catch (RulesException e) {
                   return -1;
                 }
@@ -210,21 +210,21 @@ public class TokenFilter implements Scanner{
                 }
             }
             
-            switch(theType){
-                case IRObject.iEntity           : next.sym=(sym.RENTITY);        break;
-                case IRObject.iName             : next.sym=(sym.RNAME);          break;
-                case IRObject.iInteger          : next.sym=(sym.RLONG);          break;
-                case IRObject.iDouble           : next.sym=(sym.RDOUBLE);        break;
-                case IRObject.iString           : next.sym=(sym.RSTRING);        break;
-                case IRObject.iBoolean          : next.sym=(sym.RBOOLEAN);       break;
-                case IRObject.iDecisiontable    : next.sym=(sym.RDECISIONTABLE); break;
-                case IRObject.iArray            : next.sym=(sym.RARRAY);         break;
-                case IRObject.iTime             : next.sym=(sym.RDATE);          break;
-                case IRObject.iTable            : next.sym=(sym.RTABLE);         break;
-                case IRObject.iOperator         : next.sym=(sym.ROPERATOR);      break;
-                case IRObject.iXmlValue         : next.sym=(sym.RXMLVALUE);      break;
-                case -1                         : next.sym=(sym.UNDEFINED);      break;                        
-                default: 
+            
+            if   (theType == IRObject.iEntity           ){ next.sym=(sym.RENTITY); 
+        	} else if (theType == IRObject.iName             ){ next.sym=(sym.RNAME);          
+            } else if (theType == IRObject.iInteger          ){ next.sym=(sym.RLONG);          
+            } else if (theType == IRObject.iDouble           ){ next.sym=(sym.RDOUBLE);        
+            } else if (theType == IRObject.iString           ){ next.sym=(sym.RSTRING);        
+            } else if (theType == IRObject.iBoolean          ){ next.sym=(sym.RBOOLEAN);       
+            } else if (theType == IRObject.iDecisiontable    ){ next.sym=(sym.RDECISIONTABLE); 
+            } else if (theType == IRObject.iArray            ){ next.sym=(sym.RARRAY);         
+            } else if (theType == IRObject.iTime             ){ next.sym=(sym.RDATE);          
+            } else if (theType == IRObject.iTable            ){ next.sym=(sym.RTABLE);         
+            } else if (theType == IRObject.iOperator         ){ next.sym=(sym.ROPERATOR);      
+            } else if (theType == IRObject.iXmlValue         ){ next.sym=(sym.RXMLVALUE);      
+            } else if (theType == -1                         ){ next.sym=(sym.UNDEFINED);                              
+            } else {
                     System.out.println("Unhandled Type");
                     tokens.add(next.sym+" "+type2str(next.sym)+" "+next.value.toString());
                     throw new RuntimeException("Unhandled Type: "+next.value);

@@ -40,7 +40,7 @@ public class RType implements IRType {
     public String toString() {
     	try{
 	    	String s = name 
-            +"\n              type:     "+RSession.typeInt2Str(type)
+            +"\n              type:     "+com.dtrules.interpreter.RType.getType(type).toString()
             +"\n              Entities: ";
 	    	for(int i=0;i<entities.size();i++){
 	    		s+=entities.get(i)+" ";

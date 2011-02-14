@@ -95,7 +95,7 @@ public class EL implements ICompiler {
             while(attribs.hasNext()){
                 RName        attribname = attribs.next();
                 REntityEntry entry      = entity.getEntry(attribname);
-                addType(entity,attribname,entry.type);
+                addType(entity,attribname,entry.type.getId());
             }
         }
         
