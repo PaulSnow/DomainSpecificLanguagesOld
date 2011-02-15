@@ -16,6 +16,7 @@
 package com.dtrules.compiler.el;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.dtrules.entity.IREntity;
 import com.dtrules.entity.REntity;

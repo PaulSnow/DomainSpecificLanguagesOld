@@ -13,7 +13,7 @@
 # * See the License for the specific language governing permissions and  
 # * limitations under the License.  
 # *
-project=~/java/DTRules/EL
+project=~/java/DomainSpecificLanguages/EL
 cupDir="$project/src/main/java/com/dtrules/compiler/el/cup/parser"
 libDir="$project/lib"
 

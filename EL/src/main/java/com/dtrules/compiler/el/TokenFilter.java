@@ -54,6 +54,7 @@ public class TokenFilter implements Scanner{
         this.state      = session.getState();
         this.localtypes = localtypes;
     }
+    
     /**
      * Look up an Identifier in the symbol table and return its type.
      * @param ident
@@ -198,6 +199,7 @@ public class TokenFilter implements Scanner{
                 entity=ident.substring(0,ident.indexOf('.'));
                 ident =ident.substring(ident.indexOf('.')+1);
             }
+            
             int    theType = identType(ident,entity);
             
             if(theType == -1 ){

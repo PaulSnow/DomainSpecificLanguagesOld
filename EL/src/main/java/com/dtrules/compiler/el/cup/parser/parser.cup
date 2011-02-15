@@ -19,6 +19,7 @@ package com.dtrules.compiler.el.cup.parser;
 import java.util.*;
 import java.io.*;
 import java_cup.runtime.*;
+import com.dtrules.interpreter.IRObject;
 
 action code {:
     
@@ -49,20 +50,20 @@ parser code {:
   public void report_error(String message, Object info){}
 
    public final int      
-                 iBoolean       = 0,
-                 iString        = 1,
-                 iInteger       = 2,
-                 iDouble        = 3,
-                 iEntity        = 4,
-                 iName          = 5,
-                 iArray         = 6,
-                 iDecisiontable = 7,
-                 iNull          = 8,
-                 iMark          = 9,
-                 iOperator      = 10,
-                 iTime          = 11,
-                 iTable         = 12,
-                 iXmlValue      = 13; 
+                 iBoolean       = IRObject.iBoolean,
+                 iString        = IRObject.iString,
+                 iInteger       = IRObject.iInteger,
+                 iDouble        = IRObject.iDouble,
+                 iEntity        = IRObject.iEntity,
+                 iName          = IRObject.iName,
+                 iArray         = IRObject.iArray,
+                 iDecisiontable = IRObject.iDecisiontable,
+                 iNull          = IRObject.iNull,
+                 iMark          = IRObject.iMark,
+                 iOperator      = IRObject.iOperator,
+                 iDate          = IRObject.iDate,
+                 iTable         = IRObject.iTable,
+                 iXmlValue      = IRObject.iXmlValue; 
     /**
      * Adds a symbol to the local variable hash, and
      * returns allocation code for the local variable.
@@ -273,8 +274,8 @@ localvariables ::=
             LOCAL BOOLEAN RBOOLEAN:v                  {: if(true)throw new RuntimeException(
                                                     "The variable '"+rv(CUP$DTRulesParser$stack)+"' is already defined"); :} |
 
-            LOCAL DATE UNDEFINED:v                    {: RESULT = parser.newLocal(v, parser.iTime, null);                       :} | 
-            LOCAL DATE UNDEFINED:v ASSIGN dexpr:e     {: RESULT = parser.newLocal(v, parser.iTime, e + "cvd ");                 :} |
+            LOCAL DATE UNDEFINED:v                    {: RESULT = parser.newLocal(v, parser.iDate, null);                       :} | 
+            LOCAL DATE UNDEFINED:v ASSIGN dexpr:e     {: RESULT = parser.newLocal(v, parser.iDate, e + "cvd ");                 :} |
             LOCAL DATE RDATE:v                        {: if(true)throw new RuntimeException(
                                                     "The variable '"+rv(CUP$DTRulesParser$stack)+"' is already defined"); :} |
                                                     
