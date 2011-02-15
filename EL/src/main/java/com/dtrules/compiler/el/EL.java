@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.dtrules.compiler.el.RType;
+import com.dtrules.compiler.el.ELType;
 import com.dtrules.compiler.el.cup.parser.DTRulesParser;
 import com.dtrules.compiler.el.cup.parser.RLocalType;
 import com.dtrules.compiler.el.flex.scanner.DTRulesscanner;
@@ -38,7 +38,7 @@ import com.dtrules.session.IRSession;
 
 public class EL implements ICompiler {
     
-    private       HashMap<RName,RType>     types = null;
+    private       HashMap<RName,ELType>     types = null;
     private       EntityFactory            ef;
     private       IRSession                session;
        
@@ -58,9 +58,9 @@ public class EL implements ICompiler {
      * @throws Exception
      */
     private void addType( REntity entity, RName name, int itype) throws Exception {
-        RType type =  types.get(name);
+        ELType type =  types.get(name);
         if(type==null){
-            type      = new RType(name,itype,entity);
+            type      = new ELType(name,itype,entity);
             types.put(name,type);
         }else{
             if(type.getType()!=itype){
@@ -81,11 +81,11 @@ public class EL implements ICompiler {
      * @return
      * @throws Exception
      */
-    public HashMap<RName,RType> getTypes(EntityFactory ef) throws Exception {
+    public HashMap<RName,ELType> getTypes(EntityFactory ef) throws Exception {
         
         if(types!=null)return types;
         
-        types = new HashMap<RName, RType>();
+        types = new HashMap<RName, ELType>();
         Iterator<RName> entities = ef.getEntityRNameIterator();
         while(entities.hasNext()){
             RName    name    = entities.next();
@@ -102,7 +102,7 @@ public class EL implements ICompiler {
         Iterator<RName> tables = ef.getDecisionTableRNameIterator();
         while(tables.hasNext()){
             RName tablename = tables.next();
-            RType type = new RType(tablename,IRObject.iDecisiontable,(REntity) ef.getDecisiontables());
+            ELType type = new ELType(tablename,IRObject.iDecisiontable,(REntity) ef.getDecisiontables());
             if(types.containsKey(tablename)){
                 System.out.println("Multiple Decision Tables found with the name '"+types.get(tablename)+"'");
             }
@@ -233,7 +233,7 @@ public class EL implements ICompiler {
     /* (non-Javadoc)
      * @see com.dtrules.compiler.ICompiler#getTypes()
      */
-    public HashMap<RName,RType> getTypes() {
+    public HashMap<RName,ELType> getTypes() {
         return types;
     }
     /**
@@ -242,7 +242,7 @@ public class EL implements ICompiler {
      */
     public ArrayList<String> getPossibleReferenced() {
         ArrayList<String> v = new ArrayList<String>();
-        for(RType type :types.values()){
+        for(ELType type :types.values()){
             v.addAll(type.getPossibleReferenced());
         }
         return v;
@@ -252,7 +252,7 @@ public class EL implements ICompiler {
      */
     public ArrayList<String> getUnReferenced() {
         ArrayList<String> v = new ArrayList<String>();
-        for(RType type :types.values()){
+        for(ELType type :types.values()){
             v.addAll(type.getUnReferenced());
         }
         return v;

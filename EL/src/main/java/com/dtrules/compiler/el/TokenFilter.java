@@ -33,7 +33,7 @@ import java_cup.runtime.*;
 public class TokenFilter implements Scanner{
     
     Scanner                     scanner;
-    HashMap<RName, RType>       types;
+    HashMap<RName, ELType>       types;
     IRSession                   session;
     DTState                     state;
     boolean                     EOF         = false;
@@ -47,7 +47,7 @@ public class TokenFilter implements Scanner{
         return tokens;
     }
     
-    TokenFilter(IRSession session, Scanner scanner, HashMap<RName, RType> types, HashMap<String,RLocalType> localtypes){
+    TokenFilter(IRSession session, Scanner scanner, HashMap<RName, ELType> types, HashMap<String,RLocalType> localtypes){
         this.types      = types;
         this.scanner    = scanner;
         this.session    = session;
@@ -61,7 +61,7 @@ public class TokenFilter implements Scanner{
      */
     int identType(String ident,String entity){
         
-           RType type = (RType) types.get(RName.getRName(ident,true));
+           ELType type = (ELType) types.get(RName.getRName(ident,true));
            boolean defined = true;
            if(entity != null && entity.length()!=0 && type!=null){
               defined = false;
@@ -219,7 +219,7 @@ public class TokenFilter implements Scanner{
             } else if (theType == IRObject.iBoolean          ){ next.sym=(sym.RBOOLEAN);       
             } else if (theType == IRObject.iDecisiontable    ){ next.sym=(sym.RDECISIONTABLE); 
             } else if (theType == IRObject.iArray            ){ next.sym=(sym.RARRAY);         
-            } else if (theType == IRObject.iTime             ){ next.sym=(sym.RDATE);          
+            } else if (theType == IRObject.iDate             ){ next.sym=(sym.RDATE);          
             } else if (theType == IRObject.iTable            ){ next.sym=(sym.RTABLE);         
             } else if (theType == IRObject.iOperator         ){ next.sym=(sym.ROPERATOR);      
             } else if (theType == IRObject.iXmlValue         ){ next.sym=(sym.RXMLVALUE);      
