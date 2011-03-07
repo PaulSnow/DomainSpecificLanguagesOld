@@ -100,9 +100,9 @@ terminal String		ABSOLUTEVALUE, ACTION, ADD, AFTER, ALL, ALLOWING, AND, ARRAY,
 					LOCAL, LONG, LOWER_CASE, LPAREN,  LT, LTE, MAP, MAPPINGKEY, MATCH, 
 					MATCHES, MEMBER, MINUS, MONTHS, MULTIPLY, NAME, 
 					NAMEOF, NEQ, NEW, NO, NOT, NUMBEROF, OF, ON, ONE, ONERROR, 
-					OR, PERCENTOF, PERFORM, PLUS, PLUSORMINUS, POSSESSIVE, 
-					QUESTIONMARK, RANDOMIZE, RARRAY, RBOOLEAN, RBRACE, RCURLY, 
-					RDATE, RDECISIONTABLE, RDOUBLE, RELATIONSHIP_BETWEEN, 
+					OR, PERCENTOF, PERFORM, PLUS, PLUSORMINUS, POLICYSTATEMENT, 
+					POSSESSIVE, QUESTIONMARK, RANDOMIZE, RARRAY, RBOOLEAN, RBRACE, 
+					RCURLY, RDATE, RDECISIONTABLE, RDOUBLE, RELATIONSHIP_BETWEEN, 
 					REMOVE, RENTITY, 
 					RINVALID, RLONG, RNAME, RNULL, ROPERATOR, ROUNDED, RPAREN, 
 					RSTRING, RTABLE, RXMLVALUE, SEMI, SET, SORT, STARTS_WITH,  
@@ -208,6 +208,18 @@ done ::= ACTION statement_list:e                   {: RESULT = "\n"+e+"\n"; :}
       CONDITION bexpr:e SEMI debugstatement:d SEMI {: RESULT = "\n"+e+d+"\n"; :} 
       |
       CONTEXT context_for_table:e             SEMI {: RESULT = "\n"+e+"\n"; :} 
+      |
+      POLICYSTATEMENT strexpr:e               SEMI {: RESULT = e; :}
+      |
+      POLICYSTATEMENT nexpr:e                 SEMI {: RESULT = e; :}
+      |
+      POLICYSTATEMENT iexpr:e                 SEMI {: RESULT = e; :}
+      |
+      POLICYSTATEMENT fexpr:e                 SEMI {: RESULT = e; :}
+      |
+      POLICYSTATEMENT bexpr:e                 SEMI {: RESULT = e; :}
+      |
+      POLICYSTATEMENT dexpr:e                 SEMI {: RESULT = e; :}
       |
       IDENT     // This is bogus, cause the TokenFilter is going to filter out any IDENT matches.     
       ;         // But this gets rid of the warning.

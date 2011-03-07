@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.management.RuntimeErrorException;
+
 import com.dtrules.compiler.el.ELType;
 import com.dtrules.compiler.el.cup.parser.DTRulesParser;
 import com.dtrules.compiler.el.cup.parser.RLocalType;
@@ -164,7 +166,7 @@ public class EL implements ICompiler {
      * @return          Postfix
      * @throws Exception    Throws an Exception on any error.
      */
-    private String compile (boolean action, String s)throws Exception {
+    private String compile (String s)throws Exception {
 
         
         InputStream      stream  = new ByteArrayInputStream(s.getBytes());
@@ -211,28 +213,79 @@ public class EL implements ICompiler {
     }
 
     
-    /* (non-Javadoc)
+    /**
      * @see com.dtrules.compiler.ICompiler#compileContext(java.lang.String)
-     */
+     **/
+    @Override
     public String compileContext(String context) throws Exception {
-        return compile(true,"context "+context);
+        return compile("context "+context);
     }
     
-    /* (non-Javadoc)
+    /**
      * @see com.dtrules.compiler.ICompiler#compileAction(java.lang.String)
-     */
+     **/
+    @Override
     public String compileAction(String action) throws Exception {
-        return compile(true,"action "+action);
+        return compile("action "+action);
     }
-    /* (non-Javadoc)
+    /**
      * @see com.dtrules.compiler.ICompiler#compileCondition(java.lang.String)
-     */
+     **/
+    @Override
     public String compileCondition(String condition) throws Exception {
-        return compile(false,"condition "+ condition);
+        return compile("condition "+ condition);
     }
-    /* (non-Javadoc)
-     * @see com.dtrules.compiler.ICompiler#getTypes()
+    
+    /**
+     * Returns the compiled version of the policy statement.  Double quotes are
+     * replaced forcefully by single quotes.
      */
+    @Override
+    public String compilePolicyStatement(String policyStatement) throws Exception {
+        if(policyStatement==null)return "";
+        policyStatement = policyStatement.replaceAll("\"", "'");
+        StringBuffer  sbuff = new StringBuffer();
+        int s = 0;
+        int e = policyStatement.indexOf("{",s);
+        while(e>0){
+            sbuff.append("\"");
+            sbuff.append(policyStatement.substring(s, e));
+            sbuff.append("\" ");
+            s = e;
+            e = policyStatement.indexOf("}",s);
+            if(e<0){
+                throw new RuntimeException("Unbalanced braces: "+policyStatement);
+            }
+            
+            String source = "policystatement " + policyStatement.substring(s+1,e);
+
+            try{
+                String value = compile(source);
+                sbuff.append(value);
+                sbuff.append("cvs strconcat ");
+            }catch(Exception ex){
+                throw new Exception(ex.toString()+ "\n Source: >>"+ source +"<<");
+            }
+            
+            s = e+1;
+            e = policyStatement.indexOf("{",s);
+        }
+        
+        sbuff.append("\"");
+        sbuff.append(policyStatement.substring(s));
+        if(s==0){
+            sbuff.append("\" ");
+        }else{
+            sbuff.append("\" strconcat");
+        }
+        
+        return sbuff.toString();
+    }
+
+
+    /**
+     * @see com.dtrules.compiler.ICompiler#getTypes()
+     **/
     public HashMap<RName,ELType> getTypes() {
         return types;
     }

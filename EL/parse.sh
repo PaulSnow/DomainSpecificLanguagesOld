@@ -1,4 +1,3 @@
-@echo off
 # * Copyright 2004-2008 MTBJ, Inc.  
 # *   
 # * Licensed under the Apache License, Version 2.0 (the "License");  

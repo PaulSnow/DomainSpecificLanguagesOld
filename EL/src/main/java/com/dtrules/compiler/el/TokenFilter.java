@@ -239,4 +239,16 @@ public class TokenFilter implements Scanner{
     
     }
 
+    @Override
+    public String toString() {
+        StringBuffer sbuff = new StringBuffer();
+        for(String token: tokens){
+            sbuff.append(token);
+            sbuff.append(", ");
+        }
+        return sbuff.toString();
+    }
+    
+    
+
 }

@@ -61,14 +61,15 @@ string     = {stringdbl}|{stringsgl}
 <YYINITIAL> {
 
 
-  "action"         {return build(sym.ACTION); }
-  "condition"      {return build(sym.CONDITION); }
+  "action"            {return build(sym.ACTION); }
+  "condition"         {return build(sym.CONDITION); }
+  "policystatement"   {return build(sym.POLICYSTATEMENT); }
 
-  "true"           {return build(sym.RBOOLEAN); }
-  "false"          {return build(sym.RBOOLEAN); }
+  "true"              {return build(sym.RBOOLEAN); }
+  "false"             {return build(sym.RBOOLEAN); }
 
   "perform"{ws}+"when"{ws}+"called"
-				   {return build(sym.RBOOLEAN); }
+				      {return build(sym.RBOOLEAN); }
    
   {integer}           {return build(sym.INTEGER); }
   {float}             {return build(sym.FLOAT); }
