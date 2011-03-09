@@ -67,6 +67,7 @@ string     = {stringdbl}|{stringsgl}
 
   "true"              {return build(sym.RBOOLEAN); }
   "false"             {return build(sym.RBOOLEAN); }
+  "default"           {return build(sym.RBOOLEAN); }
 
   "perform"{ws}+"when"{ws}+"called"
 				      {return build(sym.RBOOLEAN); }
@@ -74,7 +75,10 @@ string     = {stringdbl}|{stringsgl}
   {integer}           {return build(sym.INTEGER); }
   {float}             {return build(sym.FLOAT); }
   {string}            {return build(sym.STRING); }
-  {Whitespace} {}
+  {Whitespace}        {}
+
+  "policy"{ws}+"statements"
+                      {return build(sym.POLICYSTATEMENTS);}
 
   "date"           {return build(sym.DATE);   }
   "time"           {return build(sym.DATE);   }

@@ -101,6 +101,7 @@ terminal String		ABSOLUTEVALUE, ACTION, ADD, AFTER, ALL, ALLOWING, AND, ARRAY,
 					MATCHES, MEMBER, MINUS, MONTHS, MULTIPLY, NAME, 
 					NAMEOF, NEQ, NEW, NO, NOT, NUMBEROF, OF, ON, ONE, ONERROR, 
 					OR, PERCENTOF, PERFORM, PLUS, PLUSORMINUS, POLICYSTATEMENT, 
+					POLICYSTATEMENTS,
 					POSSESSIVE, QUESTIONMARK, RANDOMIZE, RARRAY, RBOOLEAN, RBRACE, 
 					RCURLY, RDATE, RDECISIONTABLE, RDOUBLE, RELATIONSHIP_BETWEEN, 
 					REMOVE, RENTITY, 
@@ -694,7 +695,8 @@ texpr    ::=  RTABLE:t                    {: RESULT = t+" ";                :} |
 			  NEW strexpr TABLE OF strexpr:s
 			  							  {: /**c**/ :};
 
-strexpr  ::=  
+strexpr  ::=  POLICYSTATEMENTS            {: RESULT = "policystatements ";  :} 
+              |
               ATTRIBUTE strexpr:s OF eexpr:e
                                           {: RESULT = e+s+"getXmlAttribute "; :}
               |
