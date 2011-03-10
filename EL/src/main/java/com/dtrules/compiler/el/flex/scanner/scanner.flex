@@ -68,6 +68,8 @@ string     = {stringdbl}|{stringsgl}
   "true"              {return build(sym.RBOOLEAN); }
   "false"             {return build(sym.RBOOLEAN); }
   "default"           {return build(sym.RBOOLEAN); }
+  "otherwise"         {return build(sym.RBOOLEAN); }
+  "always"            {return build(sym.RBOOLEAN); } 
 
   "perform"{ws}+"when"{ws}+"called"
 				      {return build(sym.RBOOLEAN); }
