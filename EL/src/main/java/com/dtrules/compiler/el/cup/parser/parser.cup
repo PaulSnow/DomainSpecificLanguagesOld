@@ -86,22 +86,22 @@ parser code {:
 
 
 /* Terminals (tokens returned by the scanner). */
-terminal String		ABSOLUTEVALUE, ACTION, ADD, AFTER, ALL, ALLOWING, AND, ARRAY, 
-					ARRAY_OF_VALUES, ASCENDINGORDER, ASSIGN, ATTRIBUTE, AT, BEFORE, 
-					BETWEEN, BOOL_FUNCTION, BOOLEAN, BY, CHANGE, CLEAR, 
+terminal String		ABSOLUTEVALUE, ACTION, ADD, AFTER, ALL, ALLOWING, AND, 
+                    ARRAY, ARRAY_OF_VALUES, ASCENDINGORDER, ASSIGN, ATTRIBUTE, 
+                    AT, BEFORE, BETWEEN, BOOL_FUNCTION, BOOLEAN, BY, CHANGE, CLEAR, 
 					CLONE, COLON, CONTEXT, COMMA, CONDITION, COPY, CURRENT_DATE, 
 					CURRENT_TIMESTAMP, CVS, DATE, DAYS, DEBUG, DECIMAL_PLACES, 
 					DECREMENT, DEEPCOPY, DESCENDINGORDER, DIVIDE, DOES, DOUBLE, 
 					EACH, EARLIEST, ELEMENT, ELSE, ELSEIF, ELSEIFNONEAREFOUND, 
-					END, ENDIF, ENTITY, EQ, FIRST, FLOAT, FOR, 
+					END, ENDIF, ENTITY, EQ, EQ_IGNORE_CASE, FIRST, FLOAT, FOR, 
 					FORALL, FROM, GET, GT, GTE, HASA, HAVE, IF, IN, 
 					INCLUDE, INCLUDES, INCREMENT, INDEX_OF, INTEGER, IS, 
 					ISNOTNULL, ISNULL,	ITS, LBRACE, LCURLY, LENGTH, 
 					LOCAL, LONG, LOWER_CASE, LPAREN,  LT, LTE, MAP, MAPPINGKEY, MATCH, 
 					MATCHES, MEMBER, MINUS, MONTHS, MULTIPLY, NAME, 
-					NAMEOF, NEQ, NEW, NO, NOT, NUMBEROF, OF, ON, ONE, ONERROR, 
-					OR, PERCENTOF, PERFORM, PLUS, PLUSORMINUS, POLICYSTATEMENT, 
-					POLICYSTATEMENTS,
+					NAMEOF, NEQ, NEQ_IGNORE_CASE, NEW, NO, NOT, NUMBEROF, OF, ON, 
+					ONE, ONERROR, OR, PERCENTOF, PERFORM, PLUS, PLUSORMINUS, 
+					POLICYSTATEMENT, POLICYSTATEMENTS,
 					POSSESSIVE, QUESTIONMARK, RANDOMIZE, RARRAY, RBOOLEAN, RBRACE, 
 					RCURLY, RDATE, RDECISIONTABLE, RDOUBLE, RELATIONSHIP_BETWEEN, 
 					REMOVE, RENTITY, 
@@ -130,6 +130,7 @@ non terminal String 	includeSearch;
 non terminal String     forblock;
 non terminal String     forallblock;
 
+non terminal String     forctl;
 non terminal String     forallctl, forfirstctl;
 non terminal String     ifblock;
 non terminal String     usingblock;
@@ -159,7 +160,7 @@ non terminal String     xmlvaluestatements;
 non terminal String     separator;
 
 
-non terminal String     blist;
+non terminal String     blist, blist_ic;
 
 non terminal String     ifcontinue,
                         left_iexpr,
@@ -261,7 +262,8 @@ colonRef      ::= possessiveRef:e                             {: RESULT = e; :} 
 forallblock ::= block:blk forallctl:ctl 
 				  {: RESULT = "{ "+blk+"} "+ctl+"pop "; :};
 
-context_for_table ::= forallctl:ctl 		{: RESULT = ctl+"pop "; 			 :} |
+context_for_table ::= forctl:ctl            {: RESULT = ctl+"pop ";              :} |
+                      forallctl:ctl 		{: RESULT = ctl+"pop "; 			 :} |
 					  forfirstctl:ctl 		{: RESULT = ctl+"pop "; 			 :} |
 					  contextstatement:c 	{: RESULT = c +"execute entitypop "; :} |
 					  localvariables:v      {: RESULT = v;                       :} ;
@@ -307,7 +309,8 @@ localvariables ::=
 ifstatement ::=
              IF bexpr:b THEN block:blk1 ENDIF                     {: RESULT = "{ "+blk1+"} "              +b+ "if "    ; :} |					  
 			 IF bexpr:b THEN block:blk1 ELSE block:blk2 ENDIF     {: RESULT = "{ "+blk1+"} { "+blk2+"} }" +b+ "ifelse "; :} ;
-			  
+		
+
 // The Control statements assume the object that should be executed as
 // described by the following statements is provided on the stack, 
 // and that object should be left on the stack
@@ -444,12 +447,15 @@ setstatement ::= SET left_iexpr:v    ASSIGN number:e   {:        RESULT = e+"cvi
                  DECREMENT RDOUBLE:v     {: RESULT = v+" 1 dsub " + left(CUP$DTRulesParser$stack); :} 
 	      ;
 
-
+// Java like for statement
+forctl          ::= FOR left_iexpr:v ASSIGN number:e SEMI bexpr:b SEMI statement:s     
+                    {: RESULT = e+"cvi "+v+"{ dup execute "+s+"execute } "+b+"while "; :}
+                ; 
  
 
 performstatement ::=  
                 PERFORM RDECISIONTABLE:dt1 AND ONERROR ADD eexpr:e TO CONTEXT AND PERFORM RDECISIONTABLE:dterror
-                    {: RESULT = "/"+dt1+" lookup /"+dterror+" lookup "+e+" PerformCatchError "; :}
+                    {: RESULT = "/"+dt1+" lookup /"+dterror+" lookup "+e+" PerformCatchError "; :} |
                 RDECISIONTABLE:dt         {: RESULT = dt+" ";   :} |
                 PERFORM RDECISIONTABLE:dt {: RESULT = dt+" ";   :} |
                 PERFORM NAME:dt           {: RESULT = dt+" ";   :} ;
@@ -502,8 +508,8 @@ subtodest     ::= RLONG:a                                    {: RESULT = a+" swa
                   colonRef:e addtodest2:v                    {: notlocal(CUP$DTRulesParser$stack); RESULT = e+"entitypush "+v+"entitypop ";        :} ;
  
 addtostatement ::=               
-			  ADD array_expr:a1           TO array_expr:a2    {: RESULT =a1+a2+"false addarray "; :} |
-			  
+			  ADD array_expr:a1           TO array_expr:a2  IF NOT MEMBER    {: RESULT =a1+a2+"false addarray "; :} |
+              ADD array_expr:a1           TO array_expr:a2                   {: RESULT =a1+a2+"true  addarray "; :} |
               ADD eexpr:e                 TO addtodest:a                     {: RESULT =e+a;                    :} |
               ADD eexpr:e                 TO addtodest:a AND TO addtodest:a2 {: RESULT =e+"dup "+a+a2;          :} |
               ADD strexpr:e               TO addtodest:a                     {: RESULT =e+a;                    :} |
@@ -571,6 +577,7 @@ xmlvaluestatements ::=
 // Array expressions
 
 array_expr ::= 
+              POLICYSTATEMENTS                              {: RESULT = "policystatements ";              :} |
               colonRef:e RARRAY:v                           {: RESULT = e+"entitypush "+v+" entitypop ";  :} |
               array_expr2:a                                 {: RESULT = a;                                :} ; 
               
@@ -695,9 +702,7 @@ texpr    ::=  RTABLE:t                    {: RESULT = t+" ";                :} |
 			  NEW strexpr TABLE OF strexpr:s
 			  							  {: /**c**/ :};
 
-strexpr  ::=  POLICYSTATEMENTS            {: RESULT = "policystatements ";  :} 
-              |
-              ATTRIBUTE strexpr:s OF eexpr:e
+strexpr  ::=  ATTRIBUTE strexpr:s OF eexpr:e
                                           {: RESULT = e+s+"getXmlAttribute "; :}
               |
               MAPPINGKEY                  {: RESULT = "\"mapping*key\" cvn execute "; :}
@@ -758,11 +763,14 @@ strexpr  ::=  POLICYSTATEMENTS            {: RESULT = "policystatements ";  :}
 		      | 
 			  CHANGE strexpr:se TO LOWER_CASE {: RESULT = se +"tolowercase "; :}	      
 		      | 
-			  CHANGE strexpr:se TO UPPER_CASE {: RESULT = se +"touppercase "; :}	      
-			  GET CURRENT_DATE                        {: RESULT = "getdate ";                         :} |
-			  GET CURRENT_TIMESTAMP                   {: RESULT = "gettimestamp ";                    :} |
-              USING eexpr:ee  LPAREN strexpr:e RPAREN {: RESULT = ee + "entitypush "+e+"entitypop ";  :} |
-
+			  CHANGE strexpr:se TO UPPER_CASE {: RESULT = se +"touppercase "; :}
+			  |	      
+			  GET CURRENT_DATE                        {: RESULT = "getdate ";                         :} 
+			  |
+			  GET CURRENT_TIMESTAMP                   {: RESULT = "gettimestamp ";                    :} 
+			  |
+              USING eexpr:ee  LPAREN strexpr:e RPAREN {: RESULT = ee + "entitypush "+e+"entitypop ";  :} 
+              |
 			  // relationship Syntax              
               RELATIONSHIP_BETWEEN eexpr:e1 AND eexpr:e2 {: RESULT = e1+e2+
               														 "{ type } { '' } "+ 
@@ -901,6 +909,11 @@ thereis  ::=  THERE IS |
 
 blist     ::= strexpr:s COMMA  blist:bl    {: RESULT = "dup "+s+"streq { pop "+bl+"} over not if "; :} |
               OR strexpr:s                 {: RESULT = "dup "+s+"streq ";                           :} ;	            
+
+// Compare a list, ignoring the case
+blist_ic     ::= strexpr:s COMMA  blist:bl {: RESULT = "dup "+s+"sic== { pop "+bl+"} over not if "; :} |
+              OR strexpr:s                 {: RESULT = "dup "+s+"sic== ";                           :} ;                
+
      
 bexpr     ::= 		
 			// Complicated Tests
@@ -1037,11 +1050,18 @@ bexpr     ::=
               |
 
 // Strings
+              strexpr:s EQ_IGNORE_CASE blist_ic:bl  
+                                         {: RESULT = s+bl+"swap drop ";        :}
+              |
               strexpr:s EQ blist:bl      {: RESULT = s+bl+"swap drop ";        :}
               |              
               strexpr:s1 EQ  strexpr:s2  {: RESULT = s1+s2+"streq ";           :}
               |
               strexpr:s1 NEQ strexpr:s2  {: RESULT = s1+s2+"streq not ";       :}
+              |
+              strexpr:s1 EQ_IGNORE_CASE  strexpr:s2  {: RESULT = s1+s2+"sic== ";           :}
+              |
+              strexpr:s1 NEQ_IGNORE_CASE strexpr:s2  {: RESULT = s1+s2+"sic== not ";       :}
               |
               strexpr:s1 AT iexpr:e1 STARTS_WITH strexpr:s2
                                          {: RESULT = s1+s2+e1+"startswith ";   :}
