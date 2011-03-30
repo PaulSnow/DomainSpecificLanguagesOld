@@ -16,23 +16,20 @@
 package com.dtrules.compiler.el;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.dtrules.entity.IREntity;
-import com.dtrules.entity.REntity;
 import com.dtrules.interpreter.RName;
 import com.dtrules.session.IRType;
-import com.dtrules.session.RSession;
 
 public class ELType implements IRType {
 	 RName     name;
      int       type;
-     ArrayList<REntity> entities = new ArrayList<REntity>();
-     ArrayList<String>  refs     = new ArrayList<String>();
+     ArrayList<IREntity> entities = new ArrayList<IREntity>();
+     ArrayList<String>   refs     = new ArrayList<String>();
      
     public RName      getRName(){return name;}
     public int        getType() {return type;} 
-    public ArrayList<REntity> getEntities(){return entities;}
+    public ArrayList<IREntity> getEntities(){return entities;}
        
     public static final String REF          = "ref";
     public static final String NOT_REF      = "not ref";
@@ -51,7 +48,7 @@ public class ELType implements IRType {
     		return name +" failed to convert to a string.";
     	}
     }
-    public void addEntityAttribute(REntity _entity){
+    public void addEntityAttribute(IREntity _entity){
         if(_entity != null ){
             if(!entities.contains(_entity)){
                 entities.add(_entity);
@@ -138,7 +135,7 @@ public class ELType implements IRType {
     }
 
     
-    public ELType(RName _name,int _type, REntity _entity){
+    public ELType(RName _name,int _type, IREntity _entity){
         name = _name;
         type = _type;
         addEntityAttribute(_entity);

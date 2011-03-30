@@ -21,6 +21,7 @@ import java.util.HashMap;
 import com.dtrules.compiler.el.cup.parser.RLocalType;
 import com.dtrules.compiler.el.cup.parser.RSymbol;
 import com.dtrules.compiler.el.cup.parser.sym;
+import com.dtrules.entity.IREntity;
 import com.dtrules.entity.REntity;
 import com.dtrules.infrastructure.RulesException;
 import com.dtrules.interpreter.IRObject;
@@ -66,7 +67,7 @@ public class TokenFilter implements Scanner{
            boolean defined = true;
            if(entity != null && entity.length()!=0 && type!=null){
               defined = false;
-              for(REntity rEntity : type.getEntities()){
+              for(IREntity rEntity : type.getEntities()){
                   if(entity.equalsIgnoreCase(rEntity.getName().stringValue())){
                       if(rEntity.containsAttribute(RName.getRName(ident))){
                           defined = true;

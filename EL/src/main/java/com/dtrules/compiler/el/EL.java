@@ -29,6 +29,7 @@ import com.dtrules.compiler.el.ELType;
 import com.dtrules.compiler.el.cup.parser.DTRulesParser;
 import com.dtrules.compiler.el.cup.parser.RLocalType;
 import com.dtrules.compiler.el.flex.scanner.DTRulesscanner;
+import com.dtrules.entity.IREntity;
 import com.dtrules.entity.REntity;
 import com.dtrules.entity.REntityEntry;
 import com.dtrules.infrastructure.RulesException;
@@ -59,7 +60,7 @@ public class EL implements ICompiler {
      * @param itype
      * @throws Exception
      */
-    private void addType( REntity entity, RName name, int itype) throws Exception {
+    private void addType( IREntity entity, RName name, int itype) throws Exception {
         ELType type =  types.get(name);
         if(type==null){
             type      = new ELType(name,itype,entity);
@@ -90,8 +91,8 @@ public class EL implements ICompiler {
         types = new HashMap<RName, ELType>();
         Iterator<RName> entities = ef.getEntityRNameIterator();
         while(entities.hasNext()){
-            RName    name    = entities.next();
-            REntity  entity  = ef.findRefEntity(name);
+            RName     name    = entities.next();
+            IREntity  entity  = ef.findRefEntity(name);
             Iterator<RName> attribs = entity.getAttributeIterator();
             addType(entity,entity.getName(),IRObject.iEntity);
             while(attribs.hasNext()){
