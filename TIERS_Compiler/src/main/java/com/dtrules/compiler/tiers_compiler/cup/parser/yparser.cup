@@ -1,0 +1,1129 @@
+package verify;
+import java_cup.runtime.*;
+
+/************************************************************************************************
+* Language specifications for Rules Engine syntax. We follow BNF standards for defining rules.
+* @author Simran Kamboj
+*************************************************************************************************/
+
+action code {:
+
+    private String firstexp;		
+    
+    public String checkRList(String rList)
+      throws Error
+    {
+       if (parser.edd.isList(rList) == false)
+       {
+       	 throw new Error("\nRList: " + rList + " undefined" );
+       }
+       return rList;       
+    }
+    
+    public String checkEntity(String entity)
+      throws Error
+    {
+       if (parser.edd.isEntity(entity) == false)
+       {
+       	 throw new Error("\nEntity: " + entity + " undefined" );   	
+       }
+       return entity;
+    }
+    
+    public String checkReadOnly(String attribute)
+      throws Error
+    {
+       if (parser.edd.isReadOnly(attribute) == true)
+       {
+       	 throw new Error("\nAttribute: " + attribute + " is being modified, and is an Input" );   	
+       }
+       return attribute;
+    }    
+:}
+
+parser code {:    
+        
+    AccessEntityFactory edd = null;
+    
+    public void setAccessToEDD(AccessEntityFactory accessEDD)
+    {
+    	  edd = accessEDD;     
+    }    
+            
+    public void report_error(String message, Object info) 
+    			throws Error
+    {
+        StringBuffer m = new StringBuffer("Error");
+        if (info instanceof java_cup.runtime.Symbol) {
+            java_cup.runtime.Symbol s = ((java_cup.runtime.Symbol) info);
+            if (s.left >= 0) {      
+                m.append(" in line "+(s.left+1));   
+                if (s.right >= 0)   
+                    m.append(", column "+(s.right+1));
+            }
+        }
+        m.append(" : "+message);
+        //System.out.println(m);
+	    this.done_parsing();
+	    throw new Error(m.toString());
+    }
+   
+    public void report_fatal_error(String message, Object info) 
+    		throws Error
+    {
+        report_error(message, info);    
+    }
+
+:};
+   
+/* ------------Declaration of Terminals and Non Terminals Section----------- */
+
+terminal String EOP, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN, LESSTHAN, GREATERTHAN, OR, PLUSSTR,
+	          EQUALS, NOTEQUALS, GREATERTHANEQUALS, LESSTHANEQUALS, AND, NOT, COMMA, 
+		    DUMMY, GREATEROF, LESSEROF, ROUNDED, ORMORE, SCALED, DECPLACES, UNIMINUS,
+		    LOOKUP, CODE, USINGCOLUMN, FROMTABLE, FORDATE, THEREISNO, WITHIN, 
+                END, OF, START, ON, RETURNING,BETWEEN;
+
+terminal String TABLENAME, APOSTFIX, CPOSTFIX, USROPER, TRUEIF, FALSEIF;
+
+terminal        SUBSTRINGOF, FINDAPERSON, FINDINDIVIDUAL, ANDFINDINDIVIDUAL, FINDALLPERSONS,FINDAENTITY, FINDAELEMENT, ANDFINDREFERNCEDINDIVIDUAL,
+                SORT, ASCENDING, DESCENDING, BY,
+                FINDALLEDGINDIVIDUAL, IF, THEN, ANDSET, SIZEOF,
+                COPY, FORMAGROUP, CALLED, ADDALL, ADDALL_EDG_INDV, ADD, TO, ANDFOREACH, TOAPERSON,
+                SKIP, USING, LISTEQUALS,
+                ISA, HASA, HAS, HASAPERSON, WHOHASA, WHERE, IN, ANDTHEIR, ELEMENT,
+                ISTHERE, EDGINDIVHAS,SUMOFEACH,
+                FORALL, FOREACH,IS, ARROW,
+                CONDITION, ACTION, EXIT, THROWRULESEXCEPTION,
+                DOES, EVERY, FOREVERY, OFINDIVIDUALHAVE,
+                ACOPYOFALLMEMBERSIN, FOR, 
+                EACH, REMOVE, FROM, ISAMEMBEROF, INCLUDESMEMBER,
+                TOTHECONTEXT,FINDTHEFIRST,ANDADDIT, FORANYALLOFTHE ; 
+
+terminal String INTEGER, FLOAT, BIGDECIMAL, INTEGER_ID, FLOAT_ID, BIGDECIMAL_ID,
+                BOOL_ID, ID, ENTITY, RLIST, 
+                STR, SET, BOOL, DATEMODIFIER, POSSESSION, TIMEPERIOD,ABSOLUTETIME,NUMBEROFTIMEPERIOD, COMMALIST;
+
+non terminal String    goal;
+
+non terminal String    statementList,
+                       actionStatementList,    
+                       actionStatement, 
+                       conditionStatementList, 
+                       conditionStatement;
+                        
+non terminal String    setStatement, 
+                       performStatement, 
+                       ifStatement,
+                       sortStatement,
+                       wherehasStatement,
+                       forallStatement,
+                       someofeachStatement, 
+                       isaStatement, 
+                       hasaStatement,
+                       hasapersonStatement, 
+                       whohasaStatement,
+                       isthereStatement,
+                       orSubstring,
+                       isSubstring,
+                       thereisnoStatement,
+                       edgindivStatement,
+                       findStatement, 
+                       exitStatement,
+                       doesStatement,
+                       formGroupStatement,
+                       copyStatement,
+                       forAllEdgIndv,
+                       isforeverytest,
+                       removefromlist,
+                       addtocontextStatement,
+                       foranyalloftheStmnt,
+                       foranyallwhereStmnt,
+                       throwRulesException,
+ 			     lookupExpression,
+                       deepcopyLists  ;
+
+non terminal String    setPhrase, setPhrase2, whohasaTest, commaPhrase, commaListExpr;
+
+non terminal String    commentblock;
+
+non terminal String    term;
+
+non terminal String    id, mid, number, number_id, boolexpr, expr, commaexpr, bexpression;
+
+
+/* *>*>*>   P R E C E D E N C E   *<*<*<* */
+/*========================================*/
+   
+precedence right        FORALL, ENTITY, RLIST, ID, ADDALL, FOREACH, USING, DOES, FORDATE;
+precedence right        WHERE, LOOKUP, CODE, LPAREN;
+precedence left         OR; 
+precedence left         AND;
+precedence left 	    POSSESSION, LESSTHAN, GREATERTHAN, EQUALS, NOTEQUALS;
+precedence left         GREATERTHANEQUALS, LESSTHANEQUALS;
+precedence right        ROUNDED, SCALED;
+precedence left 	    PLUS, MINUS; 
+precedence left 	    TIMES, DIVIDE, PLUSSTR;
+precedence left         ARROW, SUMOFEACH,NOT, UNIMINUS, END, TIMEPERIOD, START;
+precedence left         APOSTFIX, CPOSTFIX, EOP; 
+
+
+
+
+/* ----------------------------Grammar Section-------------------- */ 
+  start with goal;
+
+  goal                    ::=  statementList:list  
+                               {: RESULT = list;:}
+                               ;
+
+  statementList           ::=  statementList:list CONDITION conditionStatementList:list2
+                               {: RESULT = list+"\n" + list2+"\n"; :}
+                               |
+                               statementList:list ACTION    actionStatementList:list2
+                               {: RESULT = list+ "\n" + list2+"\n"; :}
+                               |
+                               CONDITION conditionStatementList:list
+                               {: RESULT =  list+"\n"; :}
+                               |
+                               ACTION    actionStatementList:list
+                               {: RESULT =  list +"\n"; :}
+                               |
+			                   statementList:list commentblock
+                               {: RESULT = list; :}	
+                               ;
+
+  commentblock            ::=  SKIP ;                               
+                                
+  conditionStatementList  ::=  actionStatementList:list conditionStatement:stmt EOP  
+                               {: RESULT = list + " " + stmt; :}
+                               | 
+                               conditionStatement:stmt EOP
+                               {: RESULT = stmt; :}                                   
+                               ;              
+
+  actionStatementList     ::=  actionStatementList:list actionStatement:stmt EOP 
+                               {: RESULT = list + " " + stmt; :}
+                               | 
+                               actionStatement:stmt EOP
+                               {: RESULT = stmt; :}
+                               ; 
+
+  actionStatement         ::=  performStatement:stmt 
+                               {: RESULT = stmt; :}
+                               | 
+                               exitStatement:stmt 
+                               {: RESULT = stmt; :}
+                               | 
+                               setStatement:stmt 
+                               {: RESULT = stmt; :}
+                               | 
+                               wherehasStatement:stmt
+                               {: RESULT = stmt; :}
+                               |
+                               forallStatement:stmt
+                               {: RESULT = stmt; :}
+                               | 
+                               someofeachStatement:stmt
+                               {: RESULT = stmt; :}
+                               | 
+                               findStatement:stmt
+                               {: RESULT = stmt; :}
+                               |
+                               formGroupStatement:stmt
+                               {: RESULT = stmt; :}
+                               |
+                               copyStatement:stmt
+                               {: RESULT = stmt; :}
+                               |
+                               ifStatement:stmt
+                               {: RESULT = stmt; :}
+                               |
+                               sortStatement:stmt
+                               {: RESULT = stmt; :}
+                               |
+                               addtocontextStatement:stmt
+                               {: RESULT = stmt; :}
+                               |
+                               DUMMY:stmt
+                               {: RESULT = " "; :}
+                               |
+                               APOSTFIX:stmt
+                               {: RESULT = stmt; :}
+                               |
+                               USING id:id
+                               {: RESULT = id + " dictpush "; :}
+                               actionStatement:stmt
+                               {: RESULT +=  stmt + " dictpop"; :}
+                               |
+                               forAllEdgIndv:stmnt
+                               {: RESULT = stmnt; :}
+                               |
+                               USROPER:opr
+                               {: RESULT = opr; :}
+                               |
+                               LPAREN actionStatement:stmt RPAREN
+                               {: RESULT = stmt; :}
+                               |
+                               removefromlist:stmt
+                               {: RESULT = stmt; :}
+                               |
+                               throwRulesException:stmt
+                               {: RESULT = stmt; :}
+                               ; 					
+
+  conditionStatement      ::=  bexpression:exp
+                               {: RESULT = exp; :}
+                               |
+                               CPOSTFIX:pfx
+                               {: RESULT = pfx; :}
+                               ;
+ 
+  exitStatement           ::=  EXIT {: RESULT =""; :};
+                               
+
+  setStatement            ::=  SET setPhrase:p
+                               {: RESULT = p; :}                               
+                               ;
+
+  setPhrase               ::= setPhrase2:p
+                              {: RESULT = p + " def"; :}
+                              |
+                              id:i ARROW setPhrase2:p
+                              {: RESULT = p + " "+i+" dictpush def dictpop"; :}
+                              |
+                              id:i1 ARROW id:i2 ARROW setPhrase2:p
+                              {: RESULT = p + " "+i1+" dictpush "+i2+" dictpush def dictpop dictpop"; :}
+                              |
+                              POSSESSION:r setPhrase:p
+                              {:   
+                                  if(r.equalsIgnoreCase("sponsor")){
+                                    RESULT = "{ 'bogus' { pop dup } sponsor if } >> " + p + " dictpop dictpop";
+                                  }else{   
+                                    RESULT = r + " >> "+ p +" dictpop dictpop ";
+                                  }
+                              :}
+                              |
+                              ON POSSESSION:i1 id:i2 setPhrase:p
+                              {:
+                                RESULT =  "{ "+
+                                             " {" +
+                                                 " " + p +  
+                                             " } " + i1 + "." + i1 + " " + i1 + " == if" +
+                                         " } "+ i2 +"s foreach ";
+                              :} 
+                              |
+                              setPhrase:setSt COMMA SET setPhrase:p
+                              {: RESULT = setSt + " " + p ; :}                            
+                              |
+                              mid:i EQUALS ACOPYOFALLMEMBERSIN id:list WHERE bexpression:test   
+                              {: RESULT = "{ { " + i + " " + checkRList(list).substring(0,list.length()-1) 
+                                 + " copyentity addto } " + test + " if } " + list + " foreach" ; 
+                              :}
+                              ;
+
+  setPhrase2              ::=  mid:i EQUALS expr:e
+                               {: RESULT = "/" + i + " " + e ; :}
+                               |
+                               mid:i EQUALS bexpression:b 
+                               {:                                    
+                                   RESULT = "/" + checkReadOnly(i) + " " + b ; 
+                               :}                               
+                               ;
+
+  ifStatement             ::=  IF bexpression:test THEN actionStatement:stmt
+                               {: RESULT = "{ "+stmt+" } "+test+" if"; :}
+                               ;
+
+  performStatement	      ::=  TABLENAME:t 
+                               {: RESULT = t + " performtable"; :}
+                               ; 
+
+//   sort ascending EDG_individuals by EDG_Individual.TotChildSupIncAmt
+//     edg_individuals /edg_individual.totchildsupincamt { &gt; } sort  ;; 
+
+  sortStatement           ::= SORT ASCENDING id:rlist BY id:attribute
+                              {: RESULT = rlist +" /"+attribute+" { > } sort "; :}
+                              |
+                              SORT DESCENDING id:rlist BY id:attribute
+                              {: RESULT = rlist +" /"+attribute+" { < } sort "; :}
+                              ;
+  
+  orSubstring            ::=  orSubstring:s OR expr:e
+                              {: RESULT = s + " over "+e+" substring ||"; :}
+                              |
+                              orSubstring:s COMMA expr:e
+                              {: RESULT = s + " over "+e+" substring ||"; :}
+                              |
+                              orSubstring:s COMMA OR expr:e
+                              {: RESULT = s + " over "+e+" substring ||"; :}
+                              |
+                              expr:e
+                              {: RESULT = " over "+e+" substring ||"; :}
+                              ;     
+                            
+  isSubstring            ::=  IS orSubstring:s SUBSTRINGOF expr:e2
+                              {: RESULT = e2 + " false " + s + " swap pop"; :}
+                              ;
+  
+  isthereStatement        ::=  ISTHERE id:entity IN id:group 
+                               {:  RESULT = "false { true  || } " + group + "." +entity +"s"+ " foreach"  ; :}
+                               |                               
+                               ISTHERE ELEMENT IN id:list 
+                               {:  RESULT = "false { true  || } " + checkRList(list) + " foreach"  ; :}
+                               |                               
+                               ISTHERE id:entity IN id:group WHERE bexpression:test
+                               {: RESULT = "false { "+test+" || } "+ checkRList(group +"."+entity+"s") + " foreach"; :}
+                               |
+                               ISTHERE ELEMENT IN id:list WHERE bexpression:test
+                               {: RESULT = "false { "+test+" || } "+ checkRList(list) + " foreach"; :}
+                               |
+                               ISTHERE id:entity AND id:entity2 IN id:group WHERE bexpression:test
+   					 {: RESULT = "false { "+entity2+" dictpush "+test+" || dictpop } "+
+   						                checkRList(group+"."+entity+"s") + " foreach"; :}
+   					 ;
+    	 
+  thereisnoStatement      ::=  THEREISNO id:entity WITHIN id:group WHERE bexpression:test
+                               {: RESULT = "false { "+test+" || } "+ checkRList(group+"."+entity+"s") + " foreach !"; :}
+                               |
+                               THEREISNO id:entity IN id:group WHERE bexpression:test
+                               {: RESULT = "false { "+test+" || } "+ checkRList(group+"."+entity+"s") + " foreach !"; :}
+                               |
+                               THEREISNO ELEMENT IN id:list WHERE bexpression:test
+                               {: RESULT = "false { "+test+" || } "+ checkRList(list) + " foreach !"; :}
+                               |
+                               THEREISNO ELEMENT IN id:list 
+                               {: RESULT = "false { true || } "+ checkRList(list) + " foreach !"; :}
+                               ; 
+                                	 
+    	 
+  findStatement           ::=  FINDAPERSON WHERE bexpression:b ANDSET setPhrase:phrase 
+                               {: RESULT = " true { individual dictpush inverserelationship dictpush " +
+                                             "{ { pop false "+ phrase + " } "+b+" if } over if "+
+                                             "dictpop dictpop "+
+                                           "} individual.relationships foreach pop" ;
+                               :} 
+			             |
+                               FINDINDIVIDUAL IN  id:group ANDSET setPhrase:phrase
+                               {: RESULT = "individual " + group + " dictpush { " +
+                                             "individual over == "+
+                                             "{ individual dictpush " +
+                                                phrase +
+                                                " dictpop "+
+                                             "} swap if "+
+                                           "} edg_individuals foreach " +
+                                           "pop dictpop";
+                               :} 
+                               |
+                               FINDAENTITY:entity WHERE bexpression:b ANDSET setPhrase:phrase
+                               {: RESULT = "true { "                  +
+                                               "{ "                   +
+                                                   "{ pop false "     +
+                                                        phrase        +
+                                                   "} " + b + " if " +
+                                                "} over if "         +
+                                           "} "+entity+"s foreach pop";
+                       
+                               :}  
+                               | 
+                               FINDAENTITY:entity IN id:group  WHERE bexpression:b ANDSET setPhrase:phrase
+                               {: RESULT = "true { "                  +
+                                               "{ "                   +
+                                                   "{ pop false "     +
+                                                        phrase        +
+                                                   " } " + b + " if " +
+                                                " } over if "         +
+                                           " } " + group + "." +entity+"s foreach pop";
+                       
+                               :}         
+                               |
+                               FINDAELEMENT IN id:list WHERE bexpression:b ANDSET setPhrase:phrase 
+                               {: RESULT = "true { "                  +
+                                               "{ "                   +
+                                                   "{ pop false "     +
+                                                        phrase        +
+                                                   " } " + b + " if " +
+                                                " } over if "         +
+                                           " } " + checkRList(list) + " foreach pop";                       
+                               :}                                                     
+                               |
+                               FINDALLPERSONS WHERE bexpression:b ANDFINDINDIVIDUAL IN  
+                               id:group ANDSET setPhrase:phrase
+                               {: RESULT = "{ individual dictpush inverserelationship dictpush "+
+                                              "{ " +
+                                                  group +" dictpush "+
+                                                  "individual { "+
+                                                     "{ "+phrase+" } over individual == if "+
+                                                  "} edg_individuals foreach "+
+                                                  "pop dictpop "+
+                                              "} "+b+" if dictpop dictpop " +
+                                           "} relationships foreach "; 
+                               :}                                                        
+                               |
+                               FINDALLPERSONS WHERE bexpression:b ANDFINDREFERNCEDINDIVIDUAL IN  
+                               id:group ANDSET setPhrase:phrase
+                               {: RESULT = "{ individual dictpush inverserelationship dictpush "+
+                                              "{ " +
+                                                  group +" dictpush "+
+                                                  "inverserelationship dictpush individual { "+
+                                                     "{ "+phrase+" } over individual == if "+
+                                                  "} edg_individuals foreach dictpop "+
+                                                  "pop dictpop "+
+                                              "} "+b+" if dictpop dictpop " +
+                                           "} relationships foreach "; 
+                               :}                                                        
+                               |
+                               FINDALLEDGINDIVIDUAL WITHIN id:group ANDSET setPhrase:phrase
+                               {: RESULT = "{ "+ phrase + " } edg_group.edg_individuals foreach pop";
+                               :}              
+                               ;
+  
+  addtocontextStatement   ::=  ADD id:i TOTHECONTEXT 
+                               {: RESULT = i + " addtocontext"; :}
+                               |
+                               FINDTHEFIRST id:i IN id:list WHERE bexpression:test ANDADDIT TOTHECONTEXT
+                               {: RESULT = "true "+
+                                              "{  { pop "+i+" false } over "+test+" and if " +
+                                              "} "+list+" foreach " +
+                                           "pop dictpush";
+                               :}
+                               ;
+
+
+  wherehasStatement       ::=  actionStatement:stmt WHERE id:i HAS bexpression:test 
+                               {: RESULT = "true { { {pop false "+stmt+"  } "+test+" if } over if } " + i + "s foreach pop";
+                               :}
+                               ;
+
+  copyStatement           ::=  COPY id:i TO id:i2
+                               {: RESULT = "/"+ i2 + " " + i + " copyentity def"; :}                                
+					 ;
+
+  edgindivStatement       ::=  EDGINDIVHAS bexpression:test
+                               {: RESULT = "false individual.individual { "+
+                                               "{ swap "+test+" || swap } over individual == if "+
+                                           "} edg_group.edg_individuals foreach pop";
+                               :}
+                               ; 
+ 
+  formGroupStatement      ::=  FORMAGROUP id:id CALLED id:variable
+                               {: RESULT = "/"+variable+" '"+id+"' createentity def"; :}  
+                               |
+                               ADD ENTITY:i TO ENTITY:i1
+                               {: RESULT =  checkRList(i1 + "s")+ " " + i + " addto" ; :}
+                               |
+                               ADD ENTITY:i TO RLIST:i1
+                               {: RESULT =  i1+ " " + i + " addto" ; :}
+                               |
+                               ADD ID:i TO RLIST:i1
+                               {: RESULT =  i1+ " " + i + " addto" ; :}                              
+                               |
+                               ADDALL:rlist id:toGroup
+                               {: RESULT = toGroup +" dictpush { 'edg_individual' createentity dictpush "+
+                                  "/individual individual.individual def "+
+                                  "edg_individuals edg_individual addto dictpop "+
+                                  "} individuals foreach dictpop "+ 
+                                  " edg_groups "+toGroup +" addto";
+                               :}
+                               |
+                               ADDALL:rlist id:toGroup ANDFOREACH actionStatement:stmt
+                               {: RESULT = toGroup +" dictpush { "+
+                               "'edg_individual' createentity dictpush "+
+                               "/individual individual.individual def "+
+                               "edg_individuals edg_individual addto dictpop } "+
+                               "individuals foreach "+
+                               "{ individual dictpush "+stmt+" dictpop } edg_individuals foreach "+
+                               "dictpop edg_groups "+toGroup +" addto";
+                               :}
+                               ;
+ 
+  removefromlist          ::=  REMOVE EACH id:i FROM id:list WHERE bexpression:test
+                               {:
+                                  RESULT = "{ { " + list + " " + i + " removefrom} " 
+                                            + test + " if} " + list + " foreach" ;
+                               :}
+                               |
+                               REMOVE EACH id:i FROM id:list 
+                               {:
+                                  RESULT = "{ pop " + list + " " + list + " 0 getat removefrom } 0 " 
+                                            + list + " sizeof forloop" ;
+                               :} 
+                               |
+                               REMOVE id:i FROM id:list WHERE bexpression:test
+                               {:
+                                  RESULT = "{ " + list + " " + i + " removefrom } " + test + " if";
+                               :} 
+                               |
+                               REMOVE id:i FROM id:list
+                               {:
+                                  RESULT = list + " " + i + " removefrom";
+                               :} 
+                               ;
+
+  forAllEdgIndv		  ::=      ADDALL_EDG_INDV ENTITY:id
+                               {: RESULT = "{ " + id + " dictpush edg_individuals edg_individual copyentity addto dictpop " +
+                                            "} edg_individuals foreach";
+                               :}
+                               |
+                               ADDALL_EDG_INDV ENTITY:id ANDFOREACH actionStatement:as
+                               {: RESULT = "{ " + id + " dictpush edg_individuals edg_individual copyentity addto dictpop " +
+                                            "} edg_individuals foreach " +
+                                            id + " dictpush { " + as + " } edg_individuals foreach dictpop";
+                               :}                                                            
+                               ;
+  
+  forallStatement	  ::=      actionStatement:stmt FORALL id:id ANDTHEIR id:group2
+                               {: RESULT = "{ { " + stmt + " } "+ checkRList(group2) + " foreach } "+ checkRList(id) + " foreach"; :}
+                               |   
+                               actionStatement:stmt FORALL id:id AND id:id2 IN id:group1 ANDTHEIR id:group2
+                               {: RESULT = "{ "+id2+" dictpush { " + stmt + " } "+ group2+" foreach dictpop } "+ checkRList(group1 + "." + id) + " foreach"; :}
+                               |   
+                               actionStatement:stmt FORALL id:id IN id:group WHERE bexpression:test   
+                               {: RESULT = "{ { "+stmt+" } "+test+" if  } "+ checkRList(group+"."+id) +" foreach"; :}
+                               |
+                               actionStatement:stmt FORALL id:id1 AND id:id2 IN id:group WHERE bexpression:test                        
+                               {: RESULT = "{ "+id2+" dictpush { "+stmt+" } "+test+" if dictpop } "+ checkRList(group+"."+id1) +" foreach"; :}
+                               |
+                               actionStatement:stmt FORALL id:id1 AND id:id2 IN id:group                        
+                               {: RESULT = "{ "+id2+" dictpush "+stmt+" dictpop } "+ checkRList(group+"."+id1) +" foreach"; :}
+                               |
+                               actionStatement:stmt FORALL id:id1 IN id:id2
+                               {: RESULT = "{ "+stmt+" } "+ checkRList(id2+"."+id1) +" foreach"; :}
+                               |
+                               actionStatement:stmt FORALL id:id                              
+                               {: RESULT = "{ "+stmt+" } "+id+" foreach"; :}
+                               |
+                               actionStatement:stmt FORALL id:list WHERE bexpression:test   
+                               {: RESULT = "{ { "+stmt+" } "+test+" if  } "+ checkRList(list) +" foreach"; :}
+                               |
+                               actionStatement:stmt FOREACH id:id AND id:id2 IN id:group1 ANDTHEIR id:group2
+                               {: RESULT = "{ "+id2+" dictpush { " + stmt + " } "+ group2+" foreach dictpop } "+ checkRList(group1 + "." + id + "s") + " foreach"; :}
+                               |   
+                               actionStatement:stmt FOREACH id:id IN id:group WHERE bexpression:test   
+                               {: RESULT = "{ { "+stmt+" } "+test+" if  } "+ checkRList(group+"."+id+"s")+ " foreach"; :}
+                               |
+                               actionStatement:stmt FOREACH id:id1 AND id:id2 IN id:group WHERE bexpression:test                        
+                               {: RESULT = "{ "+id2+" dictpush { "+stmt+" } "+test+" if dictpop } "+ checkRList(group+"."+id1+"s") + " foreach"; :}
+                               |
+                               actionStatement:stmt FOREACH id:id1 AND id:id2 IN id:group                        
+                               {: RESULT = "{ "+id2+" dictpush "+stmt+" dictpop } "+ checkRList(group+"."+id1+"s") + " foreach"; :}
+                               |
+                               actionStatement:stmt FOREACH id:id1 IN id:id2
+                               {: RESULT = "{ "+stmt+" } "+ checkRList(id2+"."+id1+"s") + " foreach"; :}
+                               |
+                               actionStatement:stmt FOREACH id:id                              
+                               {: RESULT = "{ "+stmt+" } "+id+"s foreach"; :}
+                             ;                               
+
+  isaStatement            ::=  ISA id:relationship
+                               {: RESULT = "false { relationshipcd "+relationship+" == || "+
+                                           "} individual.relationships foreach ";
+                               :}
+                               |
+                               ISA id:relationship TOAPERSON WHERE bexpression:test
+                               {: RESULT = "false { "+
+                                             "individual dictpush "+
+                                             "{ "+test+" || } relationshipcd " + relationship + " == if "+
+                                             "dictpop "+
+                                           "} relationships foreach";
+							   :}
+							   ;
+							   
+  hasaStatement           ::=  HASA id:relationship                                         
+                               {: RESULT = "false { individual dictpush inverserelationship dictpush "+
+                                           "relationshipcd "+relationship+" == || dictpop dictpop " +
+                                           "} individual.relationships foreach";
+                               :}
+                               |
+                               HASA id:relationship WHERE bexpression:test 
+                               {: RESULT = "false { individual dictpush inverserelationship dictpush "+
+                                           "{ "+test+" || } relationshipcd " + relationship +" == if dictpop dictpop "+
+                                           "} individual.relationships foreach ";
+                               :}
+                               |
+                               HASA id:relationship whohasaStatement:test 
+                               {: RESULT = "false { individual dictpush inverserelationship dictpush "+
+                                           "{ "+test+" } relationshipcd " + relationship +" == if dictpop dictpop "+
+                                           "} individual.relationships foreach ";
+                               :}
+                               ;
+  
+  hasapersonStatement      ::= HASAPERSON WHERE bexpression:test
+                               {: RESULT = "false { "+
+                                              "individual dictpush inverserelationship dictpush "+
+                                              test + " ||  dictpop dictpop "+
+                                           "} individual.relationships foreach";
+                               :}
+                               |
+                               HASAPERSON whohasaStatement:test 
+                               {: RESULT = "false { "+
+                                              "individual dictpush inverserelationship dictpush "+
+                                              test + " dictpop dictpop "+
+                                           "} individual.relationships foreach";
+                               :}
+                               ;            
+
+  whohasaTest              ::= whohasaStatement:stmt
+                               {: RESULT = " false " + stmt; :}
+                               ;
+
+  whohasaStatement         ::= WHOHASA id:relationship
+                               {: RESULT = "{ individual dictpush inverserelationship dictpush " +
+                                                "relationshipcd " + relationship +" == || "+
+                                                "dictpop dictpop "+
+                                           "} individual.relationships foreach ";
+                               :}
+                               |
+                               WHOHASA id:relationship WHERE bexpression:test
+                               {: RESULT = "{ individual dictpush inverserelationship dictpush " +
+                                                "{ "+test+" || } relationshipcd " + relationship +" == if "+
+                                                "dictpop dictpop " +
+                                           "} individual.relationships foreach ";
+                               :}
+                               |
+                               WHOHASA id:relationship whohasaStatement:test
+                               {: RESULT = "{ individual dictpush inverserelationship dictpush " +
+                                                "{ "+test+" } relationshipcd " + relationship +" == if "+
+                                                "dictpop dictpop " +
+                                           "} individual.relationships foreach ";
+                               :}
+                              ;	
+                              
+//Does every child of the Individual have a parent whose eligibleStudent = true 
+//OldPostFix : true { individual dictpush inverserelationship dictpush { false { individual dictpush inverserelationship dictpush { eligiblestudent true == || } relationshipcd parent == if dictpop dictpop } relationships foreach &amp;&amp; } relationshipcd child == if dictpop dictpop } relationships foreach
+
+  doesStatement           ::= DOES EVERY id:r1 OFINDIVIDUALHAVE id:r2 WHERE bexpression:b
+                               {: RESULT = " true { individual dictpush inverserelationship dictpush "+
+                                              "{ false "+
+                                                 "{ individual dictpush inverserelationship dictpush "+
+                                                   "{ eligiblestudent true == || } relationshipcd "+r2+" == if "+
+                                                   "dictpop dictpop "+
+                                                 "} relationships foreach && "+
+                                              "} relationshipcd "+r1+" == if "+
+                                           "dictpop dictpop } relationships foreach ";
+                               :}
+                               ;
+
+// Is test1 for every entity in list WHERE test2
+  isforeverytest ::= IS bexpression:b1 FOREVERY id:i IN id:i2 WHERE bexpression:b2
+                       {:  RESULT = " true { { "+b1+" && } "+ b2 +" if } "+ i2 +" foreach";  :}
+                     ;
+
+foranyalloftheStmnt   ::=     boolexpr:e1 FORANYALLOFTHE:opr id:rlist               
+                               {: String boolVal = ParserUtil.getBoolToUse(opr);
+                                  RESULT = boolVal + " { " + e1 + " " + opr +                                          
+                                           " } " +  rlist + " foreach " ; 
+                               :}
+                               |
+                               boolexpr:e1 FORANYALLOFTHE:opr id:rlist IN id:group              
+                               {: String boolVal = ParserUtil.getBoolToUse(opr);
+                                  RESULT = boolVal + " { " + e1 + " " + opr +                                          
+                                           " } " +  group + "." + rlist + " foreach " ;
+                               :}                               
+                               |                               
+                               foranyalloftheStmnt:e1 FORANYALLOFTHE:opr id:rlist              
+                               {: 
+                                   if (ParserUtil.getBoolToUse(opr).equalsIgnoreCase("false"))
+                                   {  
+                                      RESULT = ParserUtil.getBoolToUse(opr) + " { " + e1 + " " + opr + " } " + rlist + "  foreach";                              
+                                   }
+                                   else
+                                   {
+                                      RESULT = "true { false && } " + rlist + " sizeof 0 == if "
+                                             + " { " + e1 + " " + opr + " } " + rlist + "  foreach";                              
+                                   }
+                               :}                                 
+                               |
+                               foranyalloftheStmnt:e1 FORANYALLOFTHE:opr id:rlist IN id:group               
+                               {: 
+                                   if (ParserUtil.getBoolToUse(opr).equalsIgnoreCase("false"))
+                                   {    
+                                      RESULT = ParserUtil.getBoolToUse(opr) +
+                                           " { " + e1 + " " + opr + " } " + group + "." + rlist + "  foreach"; 
+                                    }
+                                    else
+                                    {
+                                      RESULT = " true { false && } " + rlist + " sizeof 0 == if " +
+                                           " { " + e1 + " " + opr + " } " + group + "." + rlist + "  foreach"; 
+                                    }
+                               :}                             
+                               ;
+                                                                           
+ foranyallwhereStmnt  ::=     boolexpr:e1 FORANYALLOFTHE:opr id:rlist WHERE boolexpr:test              
+                               {: String boolVal = ParserUtil.getBoolToUse(opr);
+                                  RESULT = boolVal + " { { " + e1 + " " + opr +   
+                                                 " } " + test + " if "   +                                      
+                                           " } " +  rlist + " foreach " ; :}
+                               |
+                               boolexpr:e1 FORANYALLOFTHE:opr id:rlist IN id:group WHERE boolexpr:test             
+                               {: String boolVal = ParserUtil.getBoolToUse(opr);
+                                  RESULT = boolVal + " { { " + e1 + " " + opr +                                          
+                                                 " } " + test + " if "   +                                      
+                                           " } " +  group + "." + rlist + " foreach " ; :}                               
+                               ;
+
+ throwRulesException ::=  THROWRULESEXCEPTION STR:str
+                          {: RESULT = str + " throwexception" ; :}
+                          |
+                          THROWRULESEXCEPTION ID:id
+                          {: RESULT = id + " throwexception" ; :}
+                          ;
+
+ deepcopyLists      ::=  ACOPYOFALLMEMBERSIN id:i            
+                         {:  RESULT = i +" deepcopy"; :}                                                          
+                         ;
+
+ lookupExpression ::=  LOOKUP expr:e1 USINGCOLUMN expr:e2 FROMTABLE expr:e3 FORDATE expr:e4 
+                       {: RESULT = e1+" "+e2+" "+e3+" "+e4+" tabledatelookup"; :}
+                       |
+                       LOOKUP expr:e1 USINGCOLUMN expr:e2 FROMTABLE expr:e3  
+                       {: RESULT = e1+" "+e2+" "+e3+" tablelookup"; :}
+                       |
+                       LOOKUP CODE expr:e1 USINGCOLUMN expr:e2 FROMTABLE expr:e3 FORDATE expr:e4 
+                       {: RESULT = e1+" "+e2+" "+e3+" "+e4+" tabledatelookupforcode"; :}
+                       |
+                       LOOKUP CODE expr:e1 USINGCOLUMN expr:e2 FROMTABLE expr:e3  
+                       {: RESULT = e1+" "+e2+" "+e3+" tablelookupforcode"; :}
+                       |
+                       LOOKUP expr:e1 USINGCOLUMN expr:i1 AND expr:i2 FROMTABLE expr:e3 FORDATE expr:e4 RETURNING expr:e5
+                       {: RESULT = e1+" "+i1+" "+i2+" "+e3+" "+e4+" " +e5+" lookupMultipleParmTable"; :}
+                       ;
+                                                 
+  bexpression  ::=  boolexpr:exp 
+                    {: RESULT = exp; :}
+                    ;
+  
+  expr   ::= term:t
+             {: RESULT = t; :}
+             |
+             LPAREN expr:e RPAREN
+             {: RESULT = e; :}
+             |                 
+             LESSEROF expr:e1 OR expr:e2
+             {: RESULT =  e1 + " " + e2 + " min"; :}
+             |                          
+             GREATEROF expr:e1 OR expr:e2
+             {: RESULT =  e1 + " " + e2 + " max"; :}
+             |
+             expr:e1 ROUNDED expr:e2 ORMORE
+             {: RESULT = e1 +" "+e2+" round"; :}
+             |
+             expr:e1 SCALED INTEGER:n DECPLACES
+             {: 
+                String zeros  = "0000000000000000000000000000000000000000";
+                String sConst = "1" + zeros.substring(0,Integer.parseInt(n));
+                RESULT = e1 + " " + sConst + " * 1 round " + sConst +" div"; 
+             :}
+             |
+             expr:e1 SCALED INTEGER:n DECPLACES ROUNDED expr:e2 ORMORE
+             {: 
+                String zeros = "0000000000000000000000000000000000000000";
+                String sConst = "1"+zeros.substring(0,Integer.parseInt(n));
+                RESULT = e1 + " " + sConst + " * "+e2+" round " + sConst +" div"; 
+             :}
+             |
+             expr:e1 TIMES:op expr:e2
+             {: RESULT = e1+" "+e2+" "+op; :} 
+             | 
+             expr:e1 DIVIDE:op expr:e2
+             {: RESULT = e1+" "+e2+" "+op; :} 
+             | 
+             expr:e1 PLUS:op expr:e2
+             {: RESULT = e1+" "+e2+" "+op; :} 
+             | 
+             expr:e1 PLUSSTR:op expr:e2
+             {: RESULT = e1+" "+e2+" "+op; :} 
+             |
+             expr:e1 MINUS:op expr:e2
+             {: RESULT = e1+" "+e2+" "+op; :} 
+             | 
+             MINUS:op expr:e1 
+             {: RESULT = " 0 "+e1+" - "; :}
+             %prec UNIMINUS
+             |
+             USING id:i 
+             {: RESULT = i + " dictpush "; :}
+                expr:e
+             {: RESULT +=  e + " dictpop"; :}
+             |
+             NUMBEROFTIMEPERIOD:p BETWEEN expr:e1 AND expr:e2 
+             {: RESULT = e1 + " " + e2 + " " + p ; :}             
+             |
+             lookupExpression:e1
+             {: RESULT = e1; :}                          
+             |             
+             expr:e1 END OF TIMEPERIOD:t
+             {: 
+                if(!t.equals("months")) throw new Error("invalid syntax: "+t);
+                RESULT = e1+" endofmonth"; 
+             :}
+             |
+             expr:e1 START OF TIMEPERIOD:t
+             {: 
+                if(!t.equals("months")) throw new Error("invalid syntax: "+t);
+                RESULT = e1+" startofmonth"; 
+             :}
+             |
+             POSSESSION:r id:i
+                {:
+                    if(r.equalsIgnoreCase("sponsor")){
+                       RESULT = "{ 'bogus' { pop dup } sponsor if } >> " + i + " dictpop dictpop";
+                    }else{   
+                       RESULT = r + " >> "+ i +" dictpop dictpop"; 
+                    }
+                :}
+             
+             |
+             id:i ARROW expr:e
+             {: RESULT = i +" dictpush "+e+" dictpop"; :}             
+             |
+             SIZEOF id:list 
+             {: RESULT = checkRList(list) + " sizeof" ; :} 
+             |
+             deepcopyLists:id 
+             {: RESULT = id ; :}
+             ;   
+            
+
+  term      ::= id:i
+                {: RESULT = i; :}
+                | 
+                STR:s
+                {: RESULT = s; :}
+                |
+                number:n
+                {: RESULT = n; :}
+                ;
+
+  id        ::= ID:i
+                {: RESULT = i; :}
+                |
+                ENTITY:e
+                {: RESULT = e; :}
+                |
+                RLIST:rl
+                {: RESULT = rl; :}
+                |
+		        TIMEPERIOD:t OF id:i
+		        {: if(t.equals("years"))  t = "year";
+                   if(t.equals("months")) t = "month";
+                   if(t.equals("day"))    t = "day";
+                   RESULT = i + " " + t + "of";
+                :}
+                |
+                id:i TIMEPERIOD:t
+                {: RESULT = i + " " + t ; :}
+                |
+                SUMOFEACH id:i1 FORALL id:i2 WHERE bexpression:test
+                {:
+                   RESULT = "0 { { "+i1+" + } "+test+" if } "+i2+" foreach";
+                :}
+		        |
+		        SUMOFEACH id:i1 FORALL id:i2
+                {:
+                   RESULT = "0 { "+i1+" + } "+i2+" foreach";
+                :}
+                ; 
+
+  mid        ::= ID:i
+                {: RESULT = checkReadOnly(i); :}
+                |
+                BOOL_ID:e
+                {: RESULT = e; :}
+                |
+                ENTITY:e
+                {: RESULT = e; :}
+                |
+                RLIST:rl
+                {: RESULT = rl; :}
+                |
+                mid:i TIMEPERIOD:t
+                {: RESULT = i + " " + t ; :}                           
+                ;    
+ 
+  number_id  ::= INTEGER_ID:i
+                 {: RESULT = i; :}
+                 |
+                 FLOAT_ID:r 
+                 {: RESULT = r; :}
+                 |
+                 INTEGER_ID:i TIMEPERIOD:t
+                 {: RESULT = i + " " + t ; :}
+                 |
+                 BIGDECIMAL_ID:bg
+                 {: RESULT = bg; :}
+                 ;                
+
+   
+  number     ::= INTEGER:i
+                 {: RESULT = i; :}
+                 |
+                 FLOAT:r 
+                 {: RESULT = r; :}
+                 |
+                 INTEGER:i TIMEPERIOD:t
+                 {: RESULT = i + " " + t ; :}
+                 |
+                 BIGDECIMAL:bg
+                 {: RESULT = bg; :}
+                 ;                
+
+  commaexpr ::=	expr:e1 COMMA commaexpr:ceq
+                {:   RESULT = firstexp +" "+e1+" == || "+ceq; :}
+                |
+                expr:e1 COMMA OR commaexpr:ceq
+                {:   RESULT = firstexp +" "+e1+" == || "+ceq; :}
+                |
+                expr:e1 OR commaexpr:ceq
+                {: RESULT = firstexp +" "+e1+" == || "+ceq; :}
+                |
+                expr:e1
+                {: 	RESULT = firstexp + " "+e1+" == || "; :}                
+		        ;
+
+  commaListExpr ::= expr:id COMMA commaListExpr:ceq
+                {:     
+                    RESULT  = id + " \",\"" + " + " + ceq + " + ";
+                :}
+                |
+                expr:id
+                {:   RESULT = id ; :}                
+                ;
+
+
+  commaPhrase ::= expr:e1 EQUALS:op expr:e2 
+                {:  
+                    firstexp = e1;
+                    RESULT = e1 +" "+ e2 +" == "; 
+                :}
+                COMMA commaexpr:ceq
+                {: RESULT += ceq;:}
+                |
+                LISTEQUALS expr:e1 EQUALS:op expr:e2 
+                {:  
+                    firstexp = e1;
+                    RESULT = e1 +" "+ e2 +" == "; 
+                :}
+                COMMA commaexpr:ceq
+                {: RESULT += ceq; :}
+                |
+                COMMALIST commaListExpr:ceq              
+                {: RESULT = ceq; :}
+                ;
+              
+  boolexpr  ::= TRUEIF boolexpr:b
+                {: RESULT = b; :}
+		    |
+                FALSEIF boolexpr:b
+                {: RESULT = b + " !"; :}
+                |
+                expr:e1 LESSTHAN:op expr:e2
+                {: RESULT = e1 + " " + e2 + " " + op; :}
+                |
+                expr:e1 GREATERTHAN:op expr:e2
+                {: RESULT = e1 + " " + e2 + " " + op; :}                                
+                |
+                commaPhrase:cp
+                {: RESULT = cp;  :}
+                |                
+                expr:e1 EQUALS:op expr:e2
+                {: RESULT = e1 + " " + e2 + " " + op; :}
+                |
+                expr:e1 NOTEQUALS:op expr:e2
+                {: RESULT = e1 + " " + e2 + " " + op; :}
+                |
+                expr:e1 GREATERTHANEQUALS:op expr:e2
+                {: RESULT = e1 + " " + e2 + " " + op; :}
+                |
+                expr:e1 LESSTHANEQUALS:op expr:e2
+                {: RESULT = e1 + " " + e2 + " " + op; :}
+                |                
+                boolexpr:b1 EQUALS:op boolexpr:b2
+                {: RESULT = b1 + " " + b2 + " " + op; :}
+                |
+                boolexpr:b1 AND:op boolexpr:b2
+                {: RESULT = b1 + " " + b2 + " " + op; :}
+                |
+                boolexpr:b1 OR:op boolexpr:b2
+                {: RESULT = b1 + " " + b2 + " " + op; :}
+                |
+                NOT:op boolexpr:b
+                {: RESULT = b + " !"; :}
+                |
+                whohasaTest:exp 
+                {: RESULT = exp; :}
+                |
+		    isforeverytest:exp
+                {: RESULT = exp; :}
+                |
+		        id:i ISAMEMBEROF id:rlist
+                {: RESULT = rlist +" "+ i + " memberof"; :}
+                |
+                id:list1 INCLUDESMEMBER id:list2
+                {: RESULT = list1 + " " + list2 + " intersects"; :}
+                |
+                hasaStatement:exp 
+                {: RESULT = exp; :}
+                | 
+                hasapersonStatement:exp
+                {: RESULT = exp; :}
+                | 
+                edgindivStatement:exp 
+                {: RESULT = exp; :}
+                | 
+                isthereStatement:exp
+                {: RESULT = exp; :}
+                | 
+                isSubstring:exp
+                {: RESULT = exp; :}
+                | 
+                thereisnoStatement:exp
+                {: RESULT = exp; :}
+                | 
+                doesStatement:exp
+                {: RESULT = exp; :}                
+                |
+                isaStatement:exp
+                {: RESULT = exp; :}
+                |
+                USING ENTITY:id boolexpr:b
+                {: RESULT = id + " dictpush " + b + " dictpop"; :}
+                |
+                LPAREN boolexpr:b RPAREN 
+                {: RESULT = b; :}
+                |
+                DATEMODIFIER:m  boolexpr:e 
+                {: RESULT = m + " " + e +" setday "; :} 
+                |
+                expr:b ABSOLUTETIME:t
+                {:                 
+                   RESULT = b +" " + t ;
+                :}             
+                |                
+                POSSESSION:r boolexpr:b
+                {:
+                    if(r.equalsIgnoreCase("sponsor")){
+                       RESULT = "{ 'bogus' { pop dup } sponsor if } >> " + b + " dictpop dictpop";
+                    }else{   
+                       RESULT = r + " >> "+ b +" dictpop dictpop"; 
+                    }
+                :}
+                |
+                BOOL:b
+                {: RESULT = b; :}
+                |
+                BOOL_ID:i
+                {: RESULT = i; :}
+                |
+                id:i ARROW boolexpr:e
+                {: RESULT = i +" dictpush "+e+" dictpop"; :}
+                |                
+                foranyalloftheStmnt:b                
+                {: RESULT = b; :}                  
+                |
+                foranyallwhereStmnt:b
+                {: RESULT = b; :}    
+                ;
+
+
+ 
