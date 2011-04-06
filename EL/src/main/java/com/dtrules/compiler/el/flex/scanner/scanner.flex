@@ -140,8 +140,8 @@ string     = {stringdbl}|{stringsgl}
   ">="|"&gt="      {return build(sym.GTE); }
   "<="|"&lt="      {return build(sym.LTE); }
   
-  "is"{ws}+"equal"{ws}+"ignore"{ws}+"case"                       {return build(sym.EQ_IGNORE_CASE);}  
-  "is"{ws}+"not"{ws}+"equal"{ws}+"ignore"{ws}+"case"             {return build(sym.NEQ_IGNORE_CASE);}  
+  "is"{ws}+"equal"{ws}+"to"{ws}+"ignore"{ws}+"case"              {return build(sym.EQ_IGNORE_CASE);}  
+  "is"{ws}+"not"{ws}+"equal"{ws}+"to"{ws}+"ignore"{ws}+"case"    {return build(sym.NEQ_IGNORE_CASE);}  
   "is"{ws}+"equal"{ws}+"to"                                      {return build(sym.EQ);}
   "equal"{ws}+"to"                                               {return build(sym.EQ);}
   "is"{ws}+"not"{ws}+"equal"{ws}+"to"                            {return build(sym.NEQ);}
