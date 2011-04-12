@@ -1,177 +1,229 @@
-Warning : Terminal "FOR" was declared but never used
-Warning : *** Reduce/Reduce conflict found in state #278
+Warning : *** Reduce/Reduce conflict found in state #279
   between mid ::= ID (*) 
   and     id ::= ID (*) 
   under symbols: {TIMEPERIOD}
   Resolved in favor of the second production.
 
-Warning : *** Shift/Reduce conflict found in state #278
+Warning : *** Shift/Reduce conflict found in state #279
   between mid ::= ID (*) 
   under symbol TIMEPERIOD
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #278
+Warning : *** Shift/Reduce conflict found in state #279
   between id ::= ID (*) 
   under symbol TIMEPERIOD
   Resolved in favor of shifting.
 
-Warning : *** Reduce/Reduce conflict found in state #272
+Warning : *** Reduce/Reduce conflict found in state #273
   between id ::= ENTITY (*) 
   and     mid ::= ENTITY (*) 
   under symbols: {TIMEPERIOD}
   Resolved in favor of the first production.
 
-Warning : *** Shift/Reduce conflict found in state #272
+Warning : *** Shift/Reduce conflict found in state #273
   between id ::= ENTITY (*) 
   under symbol TIMEPERIOD
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #272
+Warning : *** Shift/Reduce conflict found in state #273
   between mid ::= ENTITY (*) 
   under symbol TIMEPERIOD
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #457
-  between boolexpr ::= FALSEIF boolexpr (*) 
-  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id WHERE boolexpr 
-  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id 
-  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id 
-  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id WHERE boolexpr 
-  under symbol FORANYALLOFTHE
+Warning : *** Reduce/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  and     term ::= id (*) 
+  under symbols: {PLUS, MINUS, TIMES, DIVIDE, LESSTHAN, GREATERTHAN, PLUSSTR, EQUALS, NOTEQUALS, GREATERTHANEQUALS, LESSTHANEQUALS, ROUNDED, SCALED, END, START, ABSOLUTETIME}
+  Resolved in favor of the first production.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol PLUS
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #13
-  between bexpression ::= boolexpr (*) 
-  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id WHERE boolexpr 
-  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id 
-  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id 
-  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id WHERE boolexpr 
-  under symbol FORANYALLOFTHE
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol MINUS
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #44
-  between boolexpr ::= foranyalloftheStmnt (*) 
-  and     foranyalloftheStmnt ::= foranyalloftheStmnt (*) FORANYALLOFTHE id IN id 
-  and     foranyalloftheStmnt ::= foranyalloftheStmnt (*) FORANYALLOFTHE id 
-  under symbol FORANYALLOFTHE
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol TIMES
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #186
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol DIVIDE
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol LESSTHAN
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol GREATERTHAN
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol PLUSSTR
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol EQUALS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol NOTEQUALS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol GREATERTHANEQUALS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol LESSTHANEQUALS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol ROUNDED
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol SCALED
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol END
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol START
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between expr ::= POSSESSION id (*) 
+  under symbol ABSOLUTETIME
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol PLUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol MINUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol TIMES
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol DIVIDE
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol LESSTHAN
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol GREATERTHAN
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol PLUSSTR
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol EQUALS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol NOTEQUALS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol GREATERTHANEQUALS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol LESSTHANEQUALS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol ROUNDED
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol SCALED
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol END
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol START
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #494
+  between term ::= id (*) 
+  under symbol ABSOLUTETIME
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #187
   between foranyalloftheStmnt ::= boolexpr FORANYALLOFTHE id (*) 
   and     foranyalloftheStmnt ::= boolexpr FORANYALLOFTHE id (*) IN id 
   and     foranyallwhereStmnt ::= boolexpr FORANYALLOFTHE id (*) IN id WHERE boolexpr 
   under symbol IN
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #214
-  between isaStatement ::= ISA id (*) 
-  and     isaStatement ::= ISA id (*) TOAPERSON WHERE bexpression 
-  under symbol TOAPERSON
+Warning : *** Shift/Reduce conflict found in state #45
+  between boolexpr ::= foranyalloftheStmnt (*) 
+  and     foranyalloftheStmnt ::= foranyalloftheStmnt (*) FORANYALLOFTHE id IN id 
+  and     foranyalloftheStmnt ::= foranyalloftheStmnt (*) FORANYALLOFTHE id 
+  under symbol FORANYALLOFTHE
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #155
+Warning : *** Shift/Reduce conflict found in state #156
   between commaexpr ::= expr (*) 
   and     commaexpr ::= expr (*) COMMA OR commaexpr 
   and     commaexpr ::= expr (*) COMMA commaexpr 
   under symbol COMMA
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #210
-  between whohasaStatement ::= WHOHASA id (*) 
-  and     whohasaStatement ::= (*) WHOHASA id WHERE bexpression 
-  and     whohasaStatement ::= (*) WHOHASA id 
-  and     whohasaStatement ::= (*) WHOHASA id whohasaStatement 
-  under symbol WHOHASA
+Warning : *** Shift/Reduce conflict found in state #215
+  between isaStatement ::= ISA id (*) 
+  and     isaStatement ::= ISA id (*) TOAPERSON WHERE bexpression 
+  under symbol TOAPERSON
   Resolved in favor of shifting.
 
-Warning : *** Reduce/Reduce conflict found in state #218
-  between NT$0 ::= (*) 
-  and     NT$1 ::= (*) 
-  under symbols: {LPAREN, USING}
-  Resolved in favor of the first production.
-
-Warning : *** Shift/Reduce conflict found in state #218
-  between NT$0 ::= (*) 
-  under symbol LPAREN
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #218
-  between NT$0 ::= (*) 
-  under symbol USING
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #218
-  between NT$1 ::= (*) 
-  under symbol LPAREN
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #218
-  between NT$1 ::= (*) 
-  under symbol USING
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #482
-  between commaListExpr ::= expr (*) 
-  and     commaListExpr ::= expr (*) COMMA commaListExpr 
-  under symbol COMMA
-  Resolved in favor of shifting.
-
-Warning : *** Reduce/Reduce conflict found in state #152
-  between NT$2 ::= (*) 
-  and     boolexpr ::= expr EQUALS expr (*) 
-  under symbols: {COMMA}
-  Resolved in favor of the first production.
-
-Warning : *** Shift/Reduce conflict found in state #152
-  between NT$2 ::= (*) 
-  under symbol COMMA
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #152
-  between boolexpr ::= expr EQUALS expr (*) 
-  under symbol COMMA
-  Resolved in favor of shifting.
-
-Warning : *** Reduce/Reduce conflict found in state #276
-  between id ::= RLIST (*) 
-  and     mid ::= RLIST (*) 
-  under symbols: {TIMEPERIOD}
-  Resolved in favor of the first production.
-
-Warning : *** Shift/Reduce conflict found in state #276
-  between id ::= RLIST (*) 
-  under symbol TIMEPERIOD
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #276
-  between mid ::= RLIST (*) 
-  under symbol TIMEPERIOD
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #501
-  between hasaStatement ::= HASA id (*) 
-  and     whohasaStatement ::= (*) WHOHASA id WHERE bexpression 
-  and     whohasaStatement ::= (*) WHOHASA id 
-  and     whohasaStatement ::= (*) WHOHASA id whohasaStatement 
-  under symbol WHOHASA
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #455
-  between boolexpr ::= DATEMODIFIER boolexpr (*) 
-  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id WHERE boolexpr 
-  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id 
-  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id 
-  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id WHERE boolexpr 
-  under symbol FORANYALLOFTHE
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #441
-  between foranyalloftheStmnt ::= foranyalloftheStmnt FORANYALLOFTHE id (*) 
-  and     foranyalloftheStmnt ::= foranyalloftheStmnt FORANYALLOFTHE id (*) IN id 
-  under symbol IN
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #386
+Warning : *** Shift/Reduce conflict found in state #387
   between boolexpr ::= TRUEIF boolexpr (*) 
   and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id WHERE boolexpr 
   and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id 
@@ -180,182 +232,125 @@ Warning : *** Shift/Reduce conflict found in state #386
   under symbol FORANYALLOFTHE
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #292
+Warning : *** Shift/Reduce conflict found in state #458
+  between boolexpr ::= FALSEIF boolexpr (*) 
+  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id WHERE boolexpr 
+  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id 
+  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id 
+  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id WHERE boolexpr 
+  under symbol FORANYALLOFTHE
+  Resolved in favor of shifting.
+
+Warning : *** Reduce/Reduce conflict found in state #153
+  between boolexpr ::= expr EQUALS expr (*) 
+  and     NT$2 ::= (*) 
+  under symbols: {COMMA}
+  Resolved in favor of the second production.
+
+Warning : *** Shift/Reduce conflict found in state #153
+  between boolexpr ::= expr EQUALS expr (*) 
+  under symbol COMMA
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #153
+  between NT$2 ::= (*) 
+  under symbol COMMA
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #14
+  between bexpression ::= boolexpr (*) 
+  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id WHERE boolexpr 
+  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id 
+  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id 
+  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id WHERE boolexpr 
+  under symbol FORANYALLOFTHE
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #211
+  between whohasaStatement ::= WHOHASA id (*) 
+  and     whohasaStatement ::= (*) WHOHASA id WHERE bexpression 
+  and     whohasaStatement ::= (*) WHOHASA id 
+  and     whohasaStatement ::= (*) WHOHASA id whohasaStatement 
+  under symbol WHOHASA
+  Resolved in favor of shifting.
+
+Warning : *** Reduce/Reduce conflict found in state #219
+  between NT$0 ::= (*) 
+  and     NT$1 ::= (*) 
+  under symbols: {LPAREN, USING}
+  Resolved in favor of the first production.
+
+Warning : *** Shift/Reduce conflict found in state #219
+  between NT$0 ::= (*) 
+  under symbol LPAREN
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #219
+  between NT$0 ::= (*) 
+  under symbol USING
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #219
+  between NT$1 ::= (*) 
+  under symbol LPAREN
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #219
+  between NT$1 ::= (*) 
+  under symbol USING
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #483
+  between commaListExpr ::= expr (*) 
+  and     commaListExpr ::= expr (*) COMMA commaListExpr 
+  under symbol COMMA
+  Resolved in favor of shifting.
+
+Warning : *** Reduce/Reduce conflict found in state #277
+  between id ::= RLIST (*) 
+  and     mid ::= RLIST (*) 
+  under symbols: {TIMEPERIOD}
+  Resolved in favor of the first production.
+
+Warning : *** Shift/Reduce conflict found in state #277
+  between id ::= RLIST (*) 
+  under symbol TIMEPERIOD
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #277
+  between mid ::= RLIST (*) 
+  under symbol TIMEPERIOD
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #502
+  between hasaStatement ::= HASA id (*) 
+  and     whohasaStatement ::= (*) WHOHASA id WHERE bexpression 
+  and     whohasaStatement ::= (*) WHOHASA id 
+  and     whohasaStatement ::= (*) WHOHASA id whohasaStatement 
+  under symbol WHOHASA
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #442
+  between foranyalloftheStmnt ::= foranyalloftheStmnt FORANYALLOFTHE id (*) 
+  and     foranyalloftheStmnt ::= foranyalloftheStmnt FORANYALLOFTHE id (*) IN id 
+  under symbol IN
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #456
+  between boolexpr ::= DATEMODIFIER boolexpr (*) 
+  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id WHERE boolexpr 
+  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id 
+  and     foranyalloftheStmnt ::= boolexpr (*) FORANYALLOFTHE id 
+  and     foranyallwhereStmnt ::= boolexpr (*) FORANYALLOFTHE id IN id WHERE boolexpr 
+  under symbol FORANYALLOFTHE
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #293
   between setPhrase ::= setPhrase COMMA SET setPhrase (*) 
   and     setPhrase ::= setPhrase (*) COMMA SET setPhrase 
   under symbol COMMA
   Resolved in favor of shifting.
 
-Warning : *** Reduce/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  and     term ::= id (*) 
-  under symbols: {PLUS, MINUS, TIMES, DIVIDE, LESSTHAN, GREATERTHAN, PLUSSTR, EQUALS, NOTEQUALS, GREATERTHANEQUALS, LESSTHANEQUALS, ROUNDED, SCALED, END, START, ABSOLUTETIME}
-  Resolved in favor of the first production.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol PLUS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol MINUS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol TIMES
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol DIVIDE
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol LESSTHAN
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol GREATERTHAN
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol PLUSSTR
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol EQUALS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol NOTEQUALS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol GREATERTHANEQUALS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol LESSTHANEQUALS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol ROUNDED
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol SCALED
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol END
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol START
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between expr ::= POSSESSION id (*) 
-  under symbol ABSOLUTETIME
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol PLUS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol MINUS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol TIMES
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol DIVIDE
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol LESSTHAN
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol GREATERTHAN
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol PLUSSTR
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol EQUALS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol NOTEQUALS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol GREATERTHANEQUALS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol LESSTHANEQUALS
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol ROUNDED
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol SCALED
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol END
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol START
-  Resolved in favor of shifting.
-
-Warning : *** Shift/Reduce conflict found in state #493
-  between term ::= id (*) 
-  under symbol ABSOLUTETIME
-  Resolved in favor of shifting.
-
-Warning : *** Production "number_id ::= BIGDECIMAL_ID " never reduced
-Warning : *** Production "number_id ::= INTEGER_ID TIMEPERIOD " never reduced
-Warning : *** Production "number_id ::= FLOAT_ID " never reduced
-Warning : *** Production "number_id ::= INTEGER_ID " never reduced
 ===== Terminals =====
 [0]EOF [1]error [2]EOP [3]PLUS [4]MINUS 
 [5]TIMES [6]DIVIDE [7]LPAREN [8]RPAREN [9]LESSTHAN 
@@ -377,13 +372,12 @@ Warning : *** Production "number_id ::= INTEGER_ID " never reduced
 [85]ISTHERE [86]EDGINDIVHAS [87]SUMOFEACH [88]FORALL [89]FOREACH 
 [90]IS [91]ARROW [92]CONDITION [93]ACTION [94]EXIT 
 [95]THROWRULESEXCEPTION [96]DOES [97]EVERY [98]FOREVERY [99]OFINDIVIDUALHAVE 
-[100]ACOPYOFALLMEMBERSIN [101]FOR [102]EACH [103]REMOVE [104]FROM 
-[105]ISAMEMBEROF [106]INCLUDESMEMBER [107]TOTHECONTEXT [108]FINDTHEFIRST [109]ANDADDIT 
-[110]FORANYALLOFTHE [111]INTEGER [112]FLOAT [113]BIGDECIMAL [114]INTEGER_ID 
-[115]FLOAT_ID [116]BIGDECIMAL_ID [117]BOOL_ID [118]ID [119]ENTITY 
-[120]RLIST [121]STR [122]SET [123]BOOL [124]DATEMODIFIER 
-[125]POSSESSION [126]TIMEPERIOD [127]ABSOLUTETIME [128]NUMBEROFTIMEPERIOD [129]COMMALIST 
-
+[100]ACOPYOFALLMEMBERSIN [101]EACH [102]REMOVE [103]FROM [104]ISAMEMBEROF 
+[105]INCLUDESMEMBER [106]TOTHECONTEXT [107]FINDTHEFIRST [108]ANDADDIT [109]FORANYALLOFTHE 
+[110]INTEGER [111]FLOAT [112]BIGDECIMAL [113]BOOL_ID [114]ID 
+[115]ENTITY [116]RLIST [117]STR [118]SET [119]BOOL 
+[120]DATEMODIFIER [121]POSSESSION [122]TIMEPERIOD [123]ABSOLUTETIME [124]NUMBEROFTIMEPERIOD 
+[125]COMMALIST 
 
 ===== Non terminals =====
 [0]goal [1]statementList [2]actionStatementList [3]actionStatement [4]conditionStatementList 
@@ -395,13 +389,12 @@ Warning : *** Production "number_id ::= INTEGER_ID " never reduced
 [30]addtocontextStatement [31]foranyalloftheStmnt [32]foranyallwhereStmnt [33]throwRulesException [34]lookupExpression 
 [35]deepcopyLists [36]setPhrase [37]setPhrase2 [38]whohasaTest [39]commaPhrase 
 [40]commaListExpr [41]commentblock [42]term [43]id [44]mid 
-[45]number [46]number_id [47]boolexpr [48]expr [49]commaexpr 
-[50]bexpression [51]NT$0 [52]NT$1 [53]NT$2 [54]NT$3 
-
+[45]number [46]boolexpr [47]expr [48]commaexpr [49]bexpression 
+[50]NT$0 [51]NT$1 [52]NT$2 [53]NT$3 
 
 ===== Productions =====
 [0] $START ::= goal EOF 
-[1] goal ::= statementList 
+[1] goal ::= statementList EOP 
 [2] statementList ::= statementList CONDITION conditionStatementList 
 [3] statementList ::= statementList ACTION actionStatementList 
 [4] statementList ::= CONDITION conditionStatementList 
@@ -569,67 +562,63 @@ Warning : *** Production "number_id ::= INTEGER_ID " never reduced
 [166] mid ::= ENTITY 
 [167] mid ::= RLIST 
 [168] mid ::= mid TIMEPERIOD 
-[169] number_id ::= INTEGER_ID 
-[170] number_id ::= FLOAT_ID 
-[171] number_id ::= INTEGER_ID TIMEPERIOD 
-[172] number_id ::= BIGDECIMAL_ID 
-[173] number ::= INTEGER 
-[174] number ::= FLOAT 
-[175] number ::= INTEGER TIMEPERIOD 
-[176] number ::= BIGDECIMAL 
-[177] commaexpr ::= expr COMMA commaexpr 
-[178] commaexpr ::= expr COMMA OR commaexpr 
-[179] commaexpr ::= expr OR commaexpr 
-[180] commaexpr ::= expr 
-[181] commaListExpr ::= expr COMMA commaListExpr 
-[182] commaListExpr ::= expr 
-[183] NT$2 ::= 
-[184] commaPhrase ::= expr EQUALS expr NT$2 COMMA commaexpr 
-[185] NT$3 ::= 
-[186] commaPhrase ::= LISTEQUALS expr EQUALS expr NT$3 COMMA commaexpr 
-[187] commaPhrase ::= COMMALIST commaListExpr 
-[188] boolexpr ::= TRUEIF boolexpr 
-[189] boolexpr ::= FALSEIF boolexpr 
-[190] boolexpr ::= expr LESSTHAN expr 
-[191] boolexpr ::= expr GREATERTHAN expr 
-[192] boolexpr ::= commaPhrase 
-[193] boolexpr ::= expr EQUALS expr 
-[194] boolexpr ::= expr NOTEQUALS expr 
-[195] boolexpr ::= expr GREATERTHANEQUALS expr 
-[196] boolexpr ::= expr LESSTHANEQUALS expr 
-[197] boolexpr ::= boolexpr EQUALS boolexpr 
-[198] boolexpr ::= boolexpr AND boolexpr 
-[199] boolexpr ::= boolexpr OR boolexpr 
-[200] boolexpr ::= NOT boolexpr 
-[201] boolexpr ::= whohasaTest 
-[202] boolexpr ::= isforeverytest 
-[203] boolexpr ::= id ISAMEMBEROF id 
-[204] boolexpr ::= id INCLUDESMEMBER id 
-[205] boolexpr ::= hasaStatement 
-[206] boolexpr ::= hasapersonStatement 
-[207] boolexpr ::= edgindivStatement 
-[208] boolexpr ::= isthereStatement 
-[209] boolexpr ::= isSubstring 
-[210] boolexpr ::= thereisnoStatement 
-[211] boolexpr ::= doesStatement 
-[212] boolexpr ::= isaStatement 
-[213] boolexpr ::= USING ENTITY boolexpr 
-[214] boolexpr ::= LPAREN boolexpr RPAREN 
-[215] boolexpr ::= DATEMODIFIER boolexpr 
-[216] boolexpr ::= expr ABSOLUTETIME 
-[217] boolexpr ::= POSSESSION boolexpr 
-[218] boolexpr ::= BOOL 
-[219] boolexpr ::= BOOL_ID 
-[220] boolexpr ::= id ARROW boolexpr 
-[221] boolexpr ::= foranyalloftheStmnt 
-[222] boolexpr ::= foranyallwhereStmnt 
+[169] number ::= INTEGER 
+[170] number ::= FLOAT 
+[171] number ::= INTEGER TIMEPERIOD 
+[172] number ::= BIGDECIMAL 
+[173] commaexpr ::= expr COMMA commaexpr 
+[174] commaexpr ::= expr COMMA OR commaexpr 
+[175] commaexpr ::= expr OR commaexpr 
+[176] commaexpr ::= expr 
+[177] commaListExpr ::= expr COMMA commaListExpr 
+[178] commaListExpr ::= expr 
+[179] NT$2 ::= 
+[180] commaPhrase ::= expr EQUALS expr NT$2 COMMA commaexpr 
+[181] NT$3 ::= 
+[182] commaPhrase ::= LISTEQUALS expr EQUALS expr NT$3 COMMA commaexpr 
+[183] commaPhrase ::= COMMALIST commaListExpr 
+[184] boolexpr ::= TRUEIF boolexpr 
+[185] boolexpr ::= FALSEIF boolexpr 
+[186] boolexpr ::= expr LESSTHAN expr 
+[187] boolexpr ::= expr GREATERTHAN expr 
+[188] boolexpr ::= commaPhrase 
+[189] boolexpr ::= expr EQUALS expr 
+[190] boolexpr ::= expr NOTEQUALS expr 
+[191] boolexpr ::= expr GREATERTHANEQUALS expr 
+[192] boolexpr ::= expr LESSTHANEQUALS expr 
+[193] boolexpr ::= boolexpr EQUALS boolexpr 
+[194] boolexpr ::= boolexpr AND boolexpr 
+[195] boolexpr ::= boolexpr OR boolexpr 
+[196] boolexpr ::= NOT boolexpr 
+[197] boolexpr ::= whohasaTest 
+[198] boolexpr ::= isforeverytest 
+[199] boolexpr ::= id ISAMEMBEROF id 
+[200] boolexpr ::= id INCLUDESMEMBER id 
+[201] boolexpr ::= hasaStatement 
+[202] boolexpr ::= hasapersonStatement 
+[203] boolexpr ::= edgindivStatement 
+[204] boolexpr ::= isthereStatement 
+[205] boolexpr ::= isSubstring 
+[206] boolexpr ::= thereisnoStatement 
+[207] boolexpr ::= doesStatement 
+[208] boolexpr ::= isaStatement 
+[209] boolexpr ::= USING ENTITY boolexpr 
+[210] boolexpr ::= LPAREN boolexpr RPAREN 
+[211] boolexpr ::= DATEMODIFIER boolexpr 
+[212] boolexpr ::= expr ABSOLUTETIME 
+[213] boolexpr ::= POSSESSION boolexpr 
+[214] boolexpr ::= BOOL 
+[215] boolexpr ::= BOOL_ID 
+[216] boolexpr ::= id ARROW boolexpr 
+[217] boolexpr ::= foranyalloftheStmnt 
+[218] boolexpr ::= foranyallwhereStmnt 
 
 ------- CUP v0.11a beta 20060608 Parser Generation Summary -------
-  0 errors and 68 warnings
-  130 terminals, 55 non-terminals, and 223 productions declared, 
-  producing 513 unique parse states.
-  1 terminal declared but not used.
-  0 non-terminal declared but not used.
+  0 errors and 63 warnings
+  126 terminals, 54 non-terminals, and 219 productions declared, 
+  producing 514 unique parse states.
+  0 terminals declared but not used.
+  0 non-terminals declared but not used.
   0 productions never reduced.
   63 conflicts detected (63 expected).
   Code written to "DTRulesParser.java", and "sym.java".

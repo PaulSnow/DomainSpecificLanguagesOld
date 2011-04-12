@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and  
  * limitations under the License.  
  */
-package com.dtrules.compiler.el;
+package com.dtrules.compiler.tiers_compiler;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.dtrules.compiler.el.cup.parser.RLocalType;
-import com.dtrules.compiler.el.cup.parser.RSymbol;
-import com.dtrules.compiler.el.cup.parser.sym;
+import com.dtrules.compiler.tiers_compiler.cup.parser.RLocalType;
+import com.dtrules.compiler.tiers_compiler.cup.parser.RSymbol;
+import com.dtrules.compiler.tiers_compiler.cup.parser.sym;
 import com.dtrules.entity.IREntity;
 import com.dtrules.entity.REntity;
 import com.dtrules.infrastructure.RulesException;
@@ -64,7 +64,7 @@ public class TokenFilter implements Scanner{
      */
     int identType(String ident,String entity){
         
-           ELType type = (ELType) types.get(RName.getRName(ident,true));
+           TIERS_Type type = (TIERS_Type) types.get(RName.getRName(ident,true));
            boolean defined = true;
            if(entity != null && entity.length()!=0 && type!=null){
               defined = false;
@@ -128,7 +128,7 @@ public class TokenFilter implements Scanner{
         }else{
             try {
               next = new RSymbol(false, scanner.next_token());
-              if(next.sym == sym.IDENT){
+              if(next.sym == sym.ID){
                   next.leftvalue = "/"+next.value.toString()+" xdef ";
               }
             } catch (Error e) {
@@ -136,65 +136,19 @@ public class TokenFilter implements Scanner{
             }
         }
         
-        if(next.sym == sym.RCURLY && lastToken.sym != sym.SEMI){
-            lastToken = new RSymbol(false, new Symbol(sym.SEMI));
-            unget     = next;
-            next      = lastToken;
-        }
         
-        if(next.sym == sym.NAME &&
-              next.value.toString().charAt(0)=='$'){
-            next.value = next.value.toString().substring(1);
-        }
-        
-        if(next.value==null){
-            if(EOF==false) {
-                next.value=";";
-                next.sym = sym.SEMI;
-                EOF = true;
-            }else{    
-                next.value="EOF";
-                next.sym=sym.EOF;
-            }
+        if(EOF || next.value==null || next.sym == sym.EOP){
+                next.value="EOP";
+                next.sym=sym.EOP;
+                if(next.sym != sym.EOP){
+                   EOF = true;
+                }
         }else{
             EOF = false;
         }
         
-        // Look for Possessives.
-        // Remove the 's from them.  They are in a form:  client's plan's contract
-        // What we feed the parser is:  POSSESSIVE client COMMA , POSSESSIVE plan COMMA , ENTITY contract
-        if(next.sym==sym.POSSESSIVE){
-            String entity = "";
-            String ident = next.value.toString();
-            ident = ident.replace("'s", "");
-            if(ident.indexOf('.')>=0){
-                entity=ident.substring(0,ident.indexOf('.'));
-                ident =ident.substring(ident.indexOf('.')+1);
-            }
-            int    theType = identType(ident,entity);
-            
-            if(theType!= IRObject.iEntity && theType != -1 ){
-                throw new RuntimeException("Invalid Possessive. "+ident+" is not an Entity");
-            }
-            
-            if(theType == -1){
-                if(localtypes.containsKey(ident.toLowerCase())){
-                    RLocalType t = localtypes.get(ident.toLowerCase());
-                    theType    = t.type;
-                    next.local = true;
-                    next.value = t.index +" local@ ";
-                }else{
-                    throw new RuntimeException("Undefined attribute '"+next.value+"'");
-                }
-            }else{
-                next.value = (entity.length()>0?entity+".":"")+ident;
-            }        
-            unget = new RSymbol(false, new Symbol(sym.COMMA)); // Inject a comma after every possessive
-            unget.value = ",";
-            
-        }
         
-        if(next.sym==sym.IDENT){
+        if(next.sym==sym.ID){
             String entity  = "";
             String ident   = next.value.toString();
             if(ident.indexOf('.')>=0){
@@ -214,24 +168,12 @@ public class TokenFilter implements Scanner{
                 }
             }
             
-            
-            if   (theType == IRObject.iEntity           ){ next.sym=(sym.RENTITY); 
-        	} else if (theType == IRObject.iName             ){ next.sym=(sym.RNAME);          
-            } else if (theType == IRObject.iInteger          ){ next.sym=(sym.RLONG);          
-            } else if (theType == IRObject.iDouble           ){ next.sym=(sym.RDOUBLE);        
-            } else if (theType == IRObject.iString           ){ next.sym=(sym.RSTRING);        
-            } else if (theType == IRObject.iBoolean          ){ next.sym=(sym.RBOOLEAN);       
-            } else if (theType == IRObject.iDecisiontable    ){ next.sym=(sym.RDECISIONTABLE); 
-            } else if (theType == IRObject.iArray            ){ next.sym=(sym.RARRAY);         
-            } else if (theType == IRObject.iDate             ){ next.sym=(sym.RDATE);          
-            } else if (theType == IRObject.iTable            ){ next.sym=(sym.RTABLE);         
-            } else if (theType == IRObject.iOperator         ){ next.sym=(sym.ROPERATOR);      
-            } else if (theType == IRObject.iXmlValue         ){ next.sym=(sym.RXMLVALUE);      
-            } else if (theType == -1                         ){ next.sym=(sym.UNDEFINED);                              
+            // Need to figure out USROPER ... edd.isUserOperator(token)
+            if   (theType == IRObject.iEntity           ){ next.sym=(sym.ENTITY); 
+            } else if (theType == IRObject.iBoolean          ){ next.sym=(sym.BOOL_ID);       
+            } else if (theType == IRObject.iArray            ){ next.sym=(sym.RLIST);         
             } else {
-                    System.out.println("Unhandled Type");
-                    tokens.add(next.sym+" "+type2str(next.sym)+" "+next.value.toString());
-                    throw new RuntimeException("Unhandled Type: "+next.value);
+                next.sym = sym.ID;
             }
         }
         

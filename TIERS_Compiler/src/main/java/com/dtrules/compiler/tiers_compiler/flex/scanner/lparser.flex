@@ -1,5 +1,8 @@
 /* --------------------------Usercode Section------------------------ */
 package com.dtrules.compiler.tiers_compiler.flex.scanner;   
+
+import com.dtrules.compiler.tiers_compiler.cup.parser.sym;
+import com.dtrules.compiler.tiers_compiler.cup.parser.ParserUtil;
 import java_cup.runtime.*;
 import java.util.Vector;
       
@@ -31,31 +34,12 @@ import java.util.Vector;
     public String sCurrentTableName = "";
     StringBuffer tableName = new StringBuffer();
     public StringBuffer sbLexOut = new StringBuffer();
-    AccessEntityFactory edd = null;
-    boolean bPrint = false;
+    boolean bPrint = true;
     
     boolean conditionState = true;
-	
-    public void setAccessToEDD(AccessEntityFactory accessEDD,
-					 boolean bPrint)
-    {
-    	  edd = accessEDD;
-        this.bPrint = bPrint;
-    }
-
-    public void setAccessToEDD(AccessEntityFactory accessEDD,
-					 boolean bPrint, Vector tableVector)
-    {
-    	  edd = accessEDD;
-        this.bPrint = bPrint;
-        this.tablesCalled = tableVector;
-    }
-
-    private Symbol symbol(int type) 
-    {
-        return new Symbol(type, yyline, yycolumn);
-    }
-        
+      
+    public int getColumn(){ return yycolumn; }
+    
     private Symbol symbol(int type, Object value) 
     {
         return new Symbol(type, yyline, yycolumn, value);
@@ -81,7 +65,7 @@ import java.util.Vector;
             String vectorValue = sName.substring(1,sName.length()-1) + "@@@@@" + this.sCurrentTableName;
             if (vectorValue == null)
             {
-              System.out.println("Insering a null in vector containg list of tables calles."); 
+              System.out.println("Inserting a null in vector containing list of tables called."); 
             }            
 	      this.tablesCalled.add(vectorValue);		       
         }                
@@ -103,16 +87,16 @@ LITERAL_CHAR2=[^"\""]
 NOT_EOP       =([^";"]|([";"][^";"]))*        
 EOP           =[";"][";"]
 LITERAL=(\'({LITERAL_CHAR1})*\')|(\"({LITERAL_CHAR2})*\")
-SPACE=[ \t\b\012\011\013\014\015]
+SPACE=[ \t\b\n\r]
 SPACES=({SPACE})+
-ANYTHING=(.|[ \t\b\n\012\011\013\014\015])*
+ANYTHING=(.|[ \t\b\n\r])*
 MONTHSOFYEAR=JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC
 
    
 %%
 /* ------------------------Lexical Rules Section---------------------- */
     
-"//"{ANYTHING}               { dprint(" EOP "); return symbol(sym.EOP); }
+"//"{ANYTHING}               { dprint(" EOP "); return symbol(sym.EOP, yytext()); }
 "/*"{ANYTHING}"*/"           {}
 
 <YYINITIAL> 
@@ -137,11 +121,11 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
     ({SPACES})*CONDITION           { dprint("\nCONDITION: "); 
                                      yybegin(LEXING);
                                      conditionState = true;
-                                     return symbol(sym.CONDITION); }
+                                     return symbol(sym.CONDITION, yytext()); }
     ({SPACES})*ACTION              { dprint("\nACTION: ");
                                      yybegin(LEXING);
                                      conditionState = false;
-                                     return symbol(sym.ACTION);    }
+                                     return symbol(sym.ACTION, yytext());    }
     .                              {
                                      yybegin(LEXING);      
                                      yypushback(1);                  
@@ -150,7 +134,7 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
 
 <TABLENAME>  
 {
-  ({SPACES}for{SPACES}each)|({SPACES}for{SPACES}all)
+  ({SPACES}for{SPACES}each)|({SPACES}for{SPACES}all)|"--EOF--"
 				{ 	 
 					yypushback(yytext().length());
 					yybegin(LEXING);
@@ -197,21 +181,24 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
 
 <LEXING>
 {
+    
+    "--EOF--"                      { dprint("--EOF--"); return symbol(sym.EOP,"EOF"); }
+    
     SKIP                           { yybegin(SKIPSTATE);
-                                     return symbol(sym.SKIP); }
+                                     return symbol(sym.SKIP,"skip"); }
 
     where|whose|which{SPACES}is|for{SPACES}which{SPACES}|who{SPACES}is  
-	                                   { dprint(" WHERE "); return symbol(sym.WHERE); }
+	                                   { dprint(" WHERE "); return symbol(sym.WHERE, yytext()); }
 
-    set                            { dprint(" SET "); return symbol(sym.SET); }
+    set                            { dprint(" SET "); return symbol(sym.SET, yytext()); }
 
-    using                          { dprint(" USING "); return symbol(sym.USING); }
+    using                          { dprint(" USING "); return symbol(sym.USING, yytext()); }
 
-    exit{NOT_EOP}                  { dprint(" EXIT "); return symbol(sym.EXIT); }
+    exit{NOT_EOP}                  { dprint(" EXIT "); return symbol(sym.EXIT, yytext()); }
 
     find                           { yybegin(FINDSTATEMENT); }  
     
-    and{SPACES}set                 { dprint(" ANDSET "); return symbol(sym.ANDSET); }
+    and{SPACES}set                 { dprint(" ANDSET "); return symbol(sym.ANDSET, yytext()); }
     
     in{SPACES}years                { dprint(" DATEMODIFIER ");  return symbol(sym.DATEMODIFIER,"setyear"); } 
     in{SPACES}months               { dprint(" DATEMODIFIER ");  return symbol(sym.DATEMODIFIER,"setmonth"); } 
@@ -220,73 +207,63 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
     month{SPACES}of{SPACES}{dec_int_id} 
                                    {                
                                        String id = yytext().substring(yytext().lastIndexOf(" "));
-                                                                 
-                                       if (!this.edd.isTime(id.trim()))		
-		                               {  
-                                             String errstr = "This must be of type time: " + id;
-                                             dprint(errstr);
-		                                     throw new Error(errstr);
-		                               }
+                                     
 		                               dprint(" ID ");  return symbol(sym.ID, id + " monthof");
 		                           }
 		                           
-    end                            { dprint(" END ");          return symbol(sym.END); }
-    start                          { dprint(" START ");        return symbol(sym.START); }
-    of                             { dprint(" OF ");           return symbol(sym.OF); }
-    on                             { dprint(" ON ");           return symbol(sym.ON); }
+    end                            { dprint(" END ");          return symbol(sym.END, yytext()); }
+    start                          { dprint(" START ");        return symbol(sym.START, yytext()); }
+    of                             { dprint(" OF ");           return symbol(sym.OF, yytext()); }
+    on                             { dprint(" ON ");           return symbol(sym.ON, yytext()); }
 
-    if                             { dprint(" IF ");           return symbol(sym.IF); }
-    then                           { dprint(" THEN ");         return symbol(sym.THEN); }
+    if                             { dprint(" IF ");           return symbol(sym.IF, yytext()); }
+    then                           { dprint(" THEN ");         return symbol(sym.THEN, yytext()); }
 
-    sum{SPACES}of{SPACES}(each|the) {dprint(" SUMOFEACH ");	   return symbol(sym.SUMOFEACH); }
+    sum{SPACES}of{SPACES}(each|the) {dprint(" SUMOFEACH ");	   return symbol(sym.SUMOFEACH, yytext()); }
 
-    sort                           { dprint(" SORT ");         return symbol(sym.SORT); }
-    ascending                      { dprint(" ASCENDING ");    return symbol(sym.ASCENDING); }
-    descending                     { dprint(" DESCENDING ");   return symbol(sym.DESCENDING); }
-    by                             { dprint(" BY ");           return symbol(sym.BY); }
+    sort                           { dprint(" SORT ");         return symbol(sym.SORT, yytext()); }
+    ascending                      { dprint(" ASCENDING ");    return symbol(sym.ASCENDING, yytext()); }
+    descending                     { dprint(" DESCENDING ");   return symbol(sym.DESCENDING, yytext()); }
+    by                             { dprint(" BY ");           return symbol(sym.BY, yytext()); }
 
   }
 
   <FINDSTATEMENT> {
         a{SPACES}person            { dprint(" FINDAPERSON "); 
                                      yybegin(LEXING); 
-                                     return symbol(sym.FINDAPERSON); }
+                                     return symbol(sym.FINDAPERSON, yytext()); }
 
         all{SPACES}persons
                                    { dprint(" FINDALLPERSONS ");
                                      yybegin(LEXING); return  
-                                     symbol(sym.FINDALLPERSONS); }
+                                     symbol(sym.FINDALLPERSONS, yytext()); }
 
         individual{SPACES}         { dprint(" FINDINDIVIDUAL ");
                                      yybegin(LEXING); 
-                                     return symbol(sym.FINDINDIVIDUAL); 
+                                     return symbol(sym.FINDINDIVIDUAL, yytext()); 
                                    }
         edg_individual             { dprint(" FINDINDIVIDUAL ");
                                      yybegin(LEXING); 
-                                     return symbol(sym.FINDINDIVIDUAL);                                       
+                                     return symbol(sym.FINDINDIVIDUAL, yytext());                                       
                                    }    
 
         all{SPACES}edg_individuals { dprint(" FINDALLEDGINDIVIDUAL ");
                                      yybegin(LEXING); 
-                                     return symbol(sym.FINDALLEDGINDIVIDUAL); 
+                                     return symbol(sym.FINDALLEDGINDIVIDUAL, yytext()); 
                                    } 
 
        (a|an){SPACES}element      {                                  
 	                                dprint(" FINDAELEMENT[FINDAELEMENT] "); 
                                       yybegin(LEXING); 
-		                          return symbol(sym.FINDAELEMENT);		               
+		                          return symbol(sym.FINDAELEMENT, yytext());		               
 		                      }                                   
       
       (a|an){SPACES}{dec_int_id}  {                                      
                                       String sEntity = (yytext().substring(1,yytext().length())).trim();
-	                                if (this.edd.isEntity(sEntity))
-		                          {
-		                              dprint(" ENTITY["+sEntity+"] "); 
+	                                  dprint(" ENTITY["+sEntity+"] "); 
                                           yybegin(LEXING); 
 		                              return symbol(sym.FINDAENTITY, sEntity);		               
-		                          }
-                                      else throw new Error(" Invalid find statement.");
-                                   }        
+		                      }
   }
 
   <LEXING> {
@@ -314,44 +291,44 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
                                      
     and{SPACES}find{SPACES}individual
 		                   { dprint(" ANDFINDINDIVIDUAL ");
-                                     return symbol(sym.ANDFINDINDIVIDUAL); 
+                                     return symbol(sym.ANDFINDINDIVIDUAL, yytext()); 
                                    }    
 
     and{SPACES}find{SPACES}referenced{SPACES}individual  {
-                                          dprint(" ISA ");  return symbol(sym.ANDFINDREFERNCEDINDIVIDUAL);    
+                                          dprint(" ISA ");  return symbol(sym.ANDFINDREFERNCEDINDIVIDUAL, yytext());    
                                        }
     
-    there{SPACES}is{SPACES}no { dprint(" THEREISNO ");    return symbol(sym.THEREISNO); }
+    there{SPACES}is{SPACES}no { dprint(" THEREISNO ");    return symbol(sym.THEREISNO, yytext()); }
   
-    within{SPACES}the                            { dprint(" WITHIN ");       return symbol(sym.WITHIN); }
+    within{SPACES}the                            { dprint(" WITHIN ");       return symbol(sym.WITHIN, yytext()); }
   
     edg_individual{SPACES}(in|within){SPACES}the{SPACES}edg_group{SPACES}has
-                                                 { dprint(" EDGINDIVHAS ");  return symbol(sym.EDGINDIVHAS); }
+                                                 { dprint(" EDGINDIVHAS ");  return symbol(sym.EDGINDIVHAS, yytext()); }
 
-    individual{SPACES}is{SPACES}(a|an){SPACES}   { dprint(" ISA ");          return symbol(sym.ISA);}
+    individual{SPACES}is{SPACES}(a|an){SPACES}   { dprint(" ISA ");          return symbol(sym.ISA, yytext());}
 
-    individual{SPACES}has{SPACES}a{SPACES}person { dprint(" HASAPERSON ");   return symbol(sym.HASAPERSON); }
+    individual{SPACES}has{SPACES}a{SPACES}person { dprint(" HASAPERSON ");   return symbol(sym.HASAPERSON, yytext()); }
 
-    to{SPACES}(a|an){SPACES}person{SPACES}       { dprint(" TOAPERSON ");    return symbol(sym.TOAPERSON); }
+    to{SPACES}(a|an){SPACES}person{SPACES}       { dprint(" TOAPERSON ");    return symbol(sym.TOAPERSON, yytext()); }
     
-    individual{SPACES}has{SPACES}(a|an){SPACES}  {  dprint(" HASA ");        return symbol(sym.HASA);}
+    individual{SPACES}has{SPACES}(a|an){SPACES}  {  dprint(" HASA ");        return symbol(sym.HASA, yytext());}
     
     who{SPACES}has{SPACES}(a|an){SPACES}
-                                   { dprint(" WHOHASA "); return symbol(sym.WHOHASA); }
+                                   { dprint(" WHOHASA "); return symbol(sym.WHOHASA, yytext()); }
         
     is{SPACES}there({SPACES}(a|an))?|there{SPACES}is({SPACES}(a|an))? 
-                                   { dprint(" ISTHERE "); return symbol(sym.ISTHERE); }
+                                   { dprint(" ISTHERE "); return symbol(sym.ISTHERE, yytext()); }
                                    
-    does                           { dprint(" DOES "); return symbol(sym.DOES); } 
+    does                           { dprint(" DOES "); return symbol(sym.DOES, yytext()); } 
 
-    has                            { dprint(" HAS "); return symbol(sym.HAS); } 
+    has                            { dprint(" HAS "); return symbol(sym.HAS, yytext()); } 
 
-    for{SPACES}every               { dprint(" FOREVERY "); return symbol(sym.FOREVERY); }                                                                                                                 
+    for{SPACES}every               { dprint(" FOREVERY "); return symbol(sym.FOREVERY, yytext()); }                                                                                                                 
 
-    every                          { dprint(" EVERY "); return symbol(sym.EVERY); }                                                                                                                 
+    every                          { dprint(" EVERY "); return symbol(sym.EVERY, yytext()); }                                                                                                                 
                                        
     of{SPACES}(the{SPACES})?individual{SPACES}have                       
-                                   { dprint(" OFINDIVIDUALHAVE "); return symbol(sym.OFINDIVIDUALHAVE); } 
+                                   { dprint(" OFINDIVIDUALHAVE "); return symbol(sym.OFINDIVIDUALHAVE, yytext()); } 
                                    
     perform{SPACES}when{SPACES}called { return symbol(sym.BOOL, "true");}
 	
@@ -361,89 +338,89 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
           					return symbol(sym.TABLENAME, sName);
 				         }
 
-    true{SPACES}if{SPACES}	     { dprint(" TRUEIF ");       return symbol(sym.TRUEIF); }
+    true{SPACES}if{SPACES}	     { dprint(" TRUEIF ");       return symbol(sym.TRUEIF, yytext()); }
 
-    false{SPACES}if{SPACES}	     { dprint(" FALSEIF ");      return symbol(sym.TRUEIF); }
+    false{SPACES}if{SPACES}	     { dprint(" FALSEIF ");      return symbol(sym.TRUEIF, yytext()); }
 
-    ->|"-"{GREATER}                { dprint(" -> ");           return symbol(sym.ARROW);  }   
+    ->|"-"{GREATER}                { dprint(" -> ");           return symbol(sym.ARROW, yytext());  }   
 
     perform			           { dprint(" PERFORM "); tableName.setLength(0); yybegin(TABLENAME); }
     				   		
-    copy                           { dprint(" COPY ");         return symbol(sym.COPY); }  	
+    copy                           { dprint(" COPY ");         return symbol(sym.COPY, yytext()); }  	
 
-    from                           { dprint(" FROM ");         return symbol(sym.FROM); }  	
+    from                           { dprint(" FROM ");         return symbol(sym.FROM, yytext()); }  	
 
-    remove                         { dprint(" REMOVE ");       return symbol(sym.REMOVE); }  	
+    remove                         { dprint(" REMOVE ");       return symbol(sym.REMOVE, yytext()); }  	
    
-    form{SPACES}(a|an)             { dprint(" FORMAGROUP ");   return symbol(sym.FORMAGROUP); }
+    form{SPACES}(a|an)             { dprint(" FORMAGROUP ");   return symbol(sym.FORMAGROUP, yytext()); }
 
-    called                         { dprint(" CALLED ");       return symbol(sym.CALLED); }
+    called                         { dprint(" CALLED ");       return symbol(sym.CALLED, yytext()); }
 
-    lookup                         { dprint(" LOOKUP ");       return symbol(sym.LOOKUP); }
+    lookup                         { dprint(" LOOKUP ");       return symbol(sym.LOOKUP, yytext()); }
 
-    code                           { dprint(" CODE ");         return symbol(sym.CODE); }
+    code                           { dprint(" CODE ");         return symbol(sym.CODE, yytext()); }
 
-    using{SPACES}column            { dprint(" USINGCOLUMN ");  return symbol(sym.USINGCOLUMN); }
+    using{SPACES}column            { dprint(" USINGCOLUMN ");  return symbol(sym.USINGCOLUMN, yytext()); }
 
-    from{SPACES}table              { dprint(" FROMTABLE ");    return symbol(sym.FROMTABLE); }
+    from{SPACES}table              { dprint(" FROMTABLE ");    return symbol(sym.FROMTABLE, yytext()); }
 
-    each                           { dprint(" EACH ");         return symbol(sym.EACH); }
+    each                           { dprint(" EACH ");         return symbol(sym.EACH, yytext()); }
 
-    for{SPACES}date                { dprint(" FORDATE ");      return symbol(sym.FORDATE); }
+    for{SPACES}date                { dprint(" FORDATE ");      return symbol(sym.FORDATE, yytext()); }
 
-    returning                      { dprint(" RETURNING ");    return symbol(sym.RETURNING); }
+    returning                      { dprint(" RETURNING ");    return symbol(sym.RETURNING, yytext()); }
     
     add{SPACES}all{SPACES}individuals{SPACES}to                 
-                                   { dprint(" ADDALL ");       return symbol(sym.ADDALL); } 
+                                   { dprint(" ADDALL ");       return symbol(sym.ADDALL, yytext()); } 
                         
     copy{SPACES}of{SPACES}all{SPACES}members{SPACES}in
-                                   { dprint(" ACOPYOFALLMEMBERSIN "); return symbol(sym.ACOPYOFALLMEMBERSIN ); }
+                                   { dprint(" ACOPYOFALLMEMBERSIN "); return symbol(sym.ACOPYOFALLMEMBERSIN , yytext()); }
 
 	add{SPACES}all{SPACES}edg_individuals{SPACES}to                 
                                    { dprint(" ADDALL_EDG_INDV "); 
-                                      return symbol(sym.ADDALL_EDG_INDV); 
+                                      return symbol(sym.ADDALL_EDG_INDV, yytext()); 
                                    }
 
-   and{SPACES}their  { dprint(" ANDTHEIR ");       return symbol(sym.ANDTHEIR); }                                    
+   and{SPACES}their  { dprint(" ANDTHEIR ");       return symbol(sym.ANDTHEIR, yytext()); }                                    
     
    and{SPACES}for{SPACES}each     
-                     { dprint(" ANDFOREACH ");     return symbol(sym.ANDFOREACH); }  
+                     { dprint(" ANDFOREACH ");     return symbol(sym.ANDFOREACH, yytext()); }  
 
    is{SPACES}a{SPACES}member{SPACES}of
-                     { dprint(" ISAMEMBEROF ");    return symbol(sym.ISAMEMBEROF); }
+                     { dprint(" ISAMEMBEROF ");    return symbol(sym.ISAMEMBEROF, yytext()); }
 
    includes{SPACES}at{SPACES}least{SPACES}one{SPACES}member{SPACES}of
-                     { dprint(" INCLUDESMEMBER "); return symbol(sym.INCLUDESMEMBER); }
+                     { dprint(" INCLUDESMEMBER "); return symbol(sym.INCLUDESMEMBER, yytext()); }
 
    {SPACES}for{SPACES}each{SPACES}
-                     { dprint(" FOREACH ");        return symbol(sym.FOREACH); }
+                     { dprint(" FOREACH ");        return symbol(sym.FOREACH, yytext()); }
    
    {SPACES}for{SPACES}all{SPACES}
-                     { dprint(" FORALL ");         return symbol(sym.FORALL); }
+                     { dprint(" FORALL ");         return symbol(sym.FORALL, yytext()); }
 
    to{SPACES}the{SPACES}context{SPACES}for{SPACES}this{SPACES}decision{SPACES}table
-                     { dprint(" tothecontext ");   return symbol(sym.TOTHECONTEXT); }    
+                     { dprint(" tothecontext ");   return symbol(sym.TOTHECONTEXT, yytext()); }    
 
    find{SPACES}the{SPACES}first
-                     { dprint(" findthefirst ");   return symbol(sym.FINDTHEFIRST); }
+                     { dprint(" findthefirst ");   return symbol(sym.FINDTHEFIRST, yytext()); }
 	   
    in{SPACES}(the{SPACES})? 
-			  { dprint(" inthe ");           return symbol(sym.IN); }
+			  { dprint(" inthe ");           return symbol(sym.IN, yytext()); }
 
    element                                      
-                    { dprint(" element ");           return symbol(sym.ELEMENT); }
+                    { dprint(" element ");           return symbol(sym.ELEMENT, yytext()); }
   
    and{SPACES}add{SPACES}it{SPACES}
-                    { dprint(" andaddit ");        return symbol(sym.ANDADDIT); }
+                    { dprint(" andaddit ");        return symbol(sym.ANDADDIT, yytext()); }
 
    quit{SPACES}rules{SPACES}engine{SPACES}with{SPACES}error{SPACES}message   {
                       String msg = yytext().substring(yytext().lastIndexOf(" "));  
-                      dprint(" THROWRULESEXCEPTION ");  return symbol(sym.THROWRULESEXCEPTION);
+                      dprint(" THROWRULESEXCEPTION ");  return symbol(sym.THROWRULESEXCEPTION, yytext());
    				  }		
    	
    create{SPACES}comma{SPACES}list{SPACES}with   {
                                 dprint(yytext()); 
-					  return symbol(sym.COMMALIST);
+					  return symbol(sym.COMMALIST, yytext());
                             }
 			  
    true|false	 { 
@@ -457,33 +434,33 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
                        }
 
     for{SPACES}any{SPACES}of{SPACES}(the{SPACES})?     { 
-                           dprint(" FORANYALLOFTHE ");  
-                           return symbol(sym.FORANYALLOFTHE, "||");  
+                           dprint(" FORANYOFTHE ");  
+                           return symbol(sym.FORANYOFTHE, "||");  
                        }
 
     {SPACES}for{SPACES}all{SPACES}of{SPACES}(the{SPACES})?     { 
-                           dprint(" FORANYALLOFTHE ");  
-                           return symbol(sym.FORANYALLOFTHE, "&&");  
+                           dprint(" FORALLOFTHE ");  
+                           return symbol(sym.FORALLOFTHE, "&&");  
                        }
                                                   			     
-    greater{SPACES}of  { dprint(" GREATEROF ");  return symbol(sym.GREATEROF); }
+    greater{SPACES}of  { dprint(" GREATEROF ");  return symbol(sym.GREATEROF, yytext()); }
     
-    lesser{SPACES}of   { dprint(" LESSEROF ");   return symbol(sym.LESSEROF); }
+    lesser{SPACES}of   { dprint(" LESSEROF ");   return symbol(sym.LESSEROF, yytext()); }
         
-    listequals         { dprint(" LISTEQUALS "); return symbol(sym.LISTEQUALS); }
+    listequals         { dprint(" LISTEQUALS "); return symbol(sym.LISTEQUALS, yytext()); }
 	
 	rounded{SPACES}up{SPACES}for  
-	                   { dprint(" ROUNDED ");    return symbol(sym.ROUNDED); }	
+	                   { dprint(" ROUNDED ");    return symbol(sym.ROUNDED, yytext()); }	
 	
-	scaled{SPACES}to   { dprint(" SCALED ");     return symbol(sym.SCALED); }	
+	scaled{SPACES}to   { dprint(" SCALED ");     return symbol(sym.SCALED, yytext()); }	
 	
 	decimal{SPACES}places
-	                   { dprint(" DECPLACES ");    return symbol(sym.DECPLACES); }	
+	                   { dprint(" DECPLACES ");    return symbol(sym.DECPLACES, yytext()); }	
 	 
                     	
-	or{SPACES}more     { dprint(" ORMORE ");     return symbol(sym.ORMORE); }
+	or{SPACES}more     { dprint(" ORMORE ");     return symbol(sym.ORMORE, yytext()); }
 			     
-    "[dummy]"{NOT_EOP} { dprint(" DUMMY "); return symbol(sym.DUMMY); }
+    "[dummy]"{NOT_EOP} { dprint(" DUMMY "); return symbol(sym.DUMMY, yytext()); }
     "[true]"{NOT_EOP}  { dprint(" true ");  return symbol(sym.BOOL, "true" ); }
     "[false]"{NOT_EOP} { dprint(" false "); return symbol(sym.BOOL, "false"); }
 
@@ -493,7 +470,7 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
     
     individual{SPACES}is     {  dprint(" removing individual is "); }  			     
 
-    size{SPACES}of   { dprint(yytext()); return symbol(sym.SIZEOF); }                         
+    size{SPACES}of   { dprint(yytext()); return symbol(sym.SIZEOF, yytext()); }                         
 
     ","              { dprint(" COMMA "); return symbol(sym.COMMA,            ","  ); }
     "<"|"&lt;"       { dprint(" < ");     return symbol(sym.LESSTHAN,         "<"  ); }
@@ -501,11 +478,11 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
     ">="|"&gt;="     { dprint(" >= ");    return symbol(sym.GREATERTHANEQUALS,">=" ); }	
     "<="|"&lt;="     { dprint(" >= ");    return symbol(sym.LESSTHANEQUALS,   "<=" ); }	
 
-    "||"|"or"	     { dprint(" || ");        return symbol(sym.OR,        "||" ); }
+    "||"|"or"	     { dprint(" || ");          return symbol(sym.OR,        "||" ); }
     "and"|"&&"|&amp;&amp; { dprint(" AND ");    return symbol(sym.AND,      "&&" ); }	
     "=="|"="         { dprint(" = ");           return symbol(sym.EQUALS,    "==" ); }
     "!="	         { dprint(" != ");          return symbol(sym.NOTEQUALS, "!=" ); }	
-    "!"	     	     { dprint(" ! ");         return symbol(sym.NOT,       "!"  ); }	
+    "!"	     	     { dprint(" ! ");           return symbol(sym.NOT,       "!"  ); }	
     "+"              { dprint(" + ");           return symbol(sym.PLUS,      "+"  ); }
     "-"              { dprint(" - ");           return symbol(sym.MINUS,     "-"  ); }
     "*"              { dprint(" * ");           return symbol(sym.TIMES,     "*"  ); }
@@ -554,7 +531,7 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
                  }
 
     between      {
-                      return symbol(sym.BETWEEN);
+                      return symbol(sym.BETWEEN, yytext());
                  }
 
     number{SPACES}of{SPACES}months
@@ -570,13 +547,13 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
 	     
 	is{SPACES}     {	              
 	                   dprint(" IS ");
-                       return symbol(sym.IS);          
+                       return symbol(sym.IS, yytext());          
 	                }    
 	
 	(a{SPACES})?substring{SPACES}of  
 	                {
                               dprint(" SUBSTRINGOF ");
-                              return symbol(sym.SUBSTRINGOF);          	             
+                              return symbol(sym.SUBSTRINGOF, yytext());          	             
 	                }
 	               
         {dec_int_id}"'s"{SPACE} {
@@ -588,47 +565,10 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
                      
         {dec_int_id} {       
 
-                String  token      = yytext();    
- 
-                           if (!this.edd.isDeclared(token))	
-		               {  
-                                  String errstr =  " Undeclared id: " + token;
-                                  dprint(errstr);
-		                  throw new Error(errstr);
-		               }
-		               
-		               if (!this.edd.isValidType(token))
-		               {
-                                  String errstr = " The type of this attribute is inValid: ";
-                                  dprint(errstr);
-		                  throw new Error(errstr);
-		               }
-		               
-		               if (this.edd.isBoolean(token)  )
-		               {
-		                    dprint(" BOOL["+token+"] "); 
-		                    return symbol(sym.BOOL_ID,    token);
-		               }
-		               else if (this.edd.isEntity(token))
-		               {
-		                    dprint(" ENTITY["+token+"] "); 
-		                    return symbol(sym.ENTITY,    token);		               
-		               }
-		               else if (this.edd.isList(token))
-		               {
-		                    dprint(" RLIST["+token+"] "); 
-		                    return symbol(sym.RLIST,    token);		               
-		               }
-		               else if (this.edd.isUserOperator(token))
-		               {
-		                    dprint(" USROPER["+token+"] "); 
-		                    return symbol(sym.USROPER, token);		                   		               
-		               }		              
-		               else 
-		               {
-		                    dprint(" ID["+token+"] "); 
-		                    return symbol(sym.ID, token);		                   		               
-		               }	
+                       String  token      = yytext();    
+                       dprint(" ID["+token+"] "); 
+		               return symbol(sym.ID, token);		                   		               
+		               	
                      }                     
                          
     {LITERAL}        { dprint(" STRING["+yytext()+"] ");
@@ -637,12 +577,12 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
 }
 
 <SKIPSTATE> {           
-  ({ANYTHING})*         { return symbol(sym.SKIP); }
+  ({ANYTHING})*         { return symbol(sym.SKIP, yytext()); }
 }
 
 
 {EOP}               { yybegin(NEWSTATEMENT);
                          dprint(" EOP ");
-                         return symbol(sym.EOP); }
+                         return symbol(sym.EOP, yytext()); }
 
 [^]                    { throw new Error("Illegal character <"+yytext()+">"); }

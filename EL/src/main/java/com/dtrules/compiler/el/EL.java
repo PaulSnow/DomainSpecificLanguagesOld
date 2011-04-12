@@ -38,10 +38,11 @@ import com.dtrules.interpreter.RName;
 import com.dtrules.session.EntityFactory;
 import com.dtrules.session.ICompiler;
 import com.dtrules.session.IRSession;
+import com.dtrules.session.IRType;
 
 public class EL implements ICompiler {
     
-    private       HashMap<RName,ELType>     types = null;
+    private       HashMap<RName,IRType>    types = null;
     private       EntityFactory            ef;
     private       IRSession                session;
        
@@ -61,7 +62,7 @@ public class EL implements ICompiler {
      * @throws Exception
      */
     private void addType( IREntity entity, RName name, int itype) throws Exception {
-        ELType type =  types.get(name);
+        ELType type =  (ELType) types.get(name);
         if(type==null){
             type      = new ELType(name,itype,entity);
             types.put(name,type);
@@ -84,11 +85,11 @@ public class EL implements ICompiler {
      * @return
      * @throws Exception
      */
-    public HashMap<RName,ELType> getTypes(EntityFactory ef) throws Exception {
+    public HashMap<RName,IRType> getTypes(EntityFactory ef) throws Exception {
         
         if(types!=null)return types;
         
-        types = new HashMap<RName, ELType>();
+        types = new HashMap<RName, IRType>();
         Iterator<RName> entities = ef.getEntityRNameIterator();
         while(entities.hasNext()){
             RName     name    = entities.next();
@@ -133,7 +134,7 @@ public class EL implements ICompiler {
         for(int i=0;i<typenames.length-1;i++){
             for(int j=0;j<typenames.length-1;j++){
                 RName one = (RName)typenames[j], two = (RName)typenames[j+1];
-                if(types.get(one).getType()> types.get(two).getType()){
+                if(((ELType)types.get(one)).getType()> ((ELType)types.get(two)).getType()){
                     Object hold = typenames[j];
                     typenames[j]=typenames[j+1];
                     typenames[j+1]=hold;
@@ -287,7 +288,7 @@ public class EL implements ICompiler {
     /**
      * @see com.dtrules.compiler.ICompiler#getTypes()
      **/
-    public HashMap<RName,ELType> getTypes() {
+    public HashMap<RName,IRType> getTypes() {
         return types;
     }
     /**
@@ -296,8 +297,8 @@ public class EL implements ICompiler {
      */
     public ArrayList<String> getPossibleReferenced() {
         ArrayList<String> v = new ArrayList<String>();
-        for(ELType type :types.values()){
-            v.addAll(type.getPossibleReferenced());
+        for(IRType type :types.values()){
+            v.addAll(((ELType)type).getPossibleReferenced());
         }
         return v;
     }
@@ -306,8 +307,8 @@ public class EL implements ICompiler {
      */
     public ArrayList<String> getUnReferenced() {
         ArrayList<String> v = new ArrayList<String>();
-        for(ELType type :types.values()){
-            v.addAll(type.getUnReferenced());
+        for(IRType type :types.values()){
+            v.addAll(((ELType)type).getUnReferenced());
         }
         return v;
     }   

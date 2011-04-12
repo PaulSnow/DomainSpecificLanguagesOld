@@ -23,12 +23,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.management.RuntimeErrorException;
+import java_cup.runtime.Symbol;
 
-import com.dtrules.compiler.el.ELType;
-import com.dtrules.compiler.el.cup.parser.DTRulesParser;
-import com.dtrules.compiler.el.cup.parser.RLocalType;
-import com.dtrules.compiler.el.flex.scanner.DTRulesscanner;
+import com.dtrules.compiler.tiers_compiler.cup.parser.DTRulesParser;
+import com.dtrules.compiler.tiers_compiler.cup.parser.RLocalType;
+import com.dtrules.compiler.tiers_compiler.flex.scanner.Lexer;
 import com.dtrules.entity.IREntity;
 import com.dtrules.entity.REntity;
 import com.dtrules.entity.REntityEntry;
@@ -38,10 +37,11 @@ import com.dtrules.interpreter.RName;
 import com.dtrules.session.EntityFactory;
 import com.dtrules.session.ICompiler;
 import com.dtrules.session.IRSession;
+import com.dtrules.session.IRType;
 
 public class TIERS_Compiler implements ICompiler {
     
-    private       HashMap<RName,ELType>     types = null;
+    private       HashMap<RName,IRType>    types = null;
     private       EntityFactory            ef;
     private       IRSession                session;
        
@@ -61,9 +61,9 @@ public class TIERS_Compiler implements ICompiler {
      * @throws Exception
      */
     private void addType( IREntity entity, RName name, int itype) throws Exception {
-        ELType type =  types.get(name);
+        TIERS_Type type =  (TIERS_Type) types.get(name);
         if(type==null){
-            type      = new ELType(name,itype,entity);
+            type      = new TIERS_Type(name,itype,entity);
             types.put(name,type);
         }else{
             if(type.getType()!=itype){
@@ -84,11 +84,11 @@ public class TIERS_Compiler implements ICompiler {
      * @return
      * @throws Exception
      */
-    public HashMap<RName,ELType> getTypes(EntityFactory ef) throws Exception {
+    public HashMap<RName,IRType> getTypes(EntityFactory ef) throws Exception {
         
         if(types!=null)return types;
         
-        types = new HashMap<RName, ELType>();
+        types = new HashMap<RName, IRType>();
         Iterator<RName> entities = ef.getEntityRNameIterator();
         while(entities.hasNext()){
             RName     name    = entities.next();
@@ -105,11 +105,12 @@ public class TIERS_Compiler implements ICompiler {
         Iterator<RName> tables = ef.getDecisionTableRNameIterator();
         while(tables.hasNext()){
             RName tablename = tables.next();
-            ELType type = new ELType(tablename,IRObject.iDecisiontable,(REntity) ef.getDecisiontables());
+            TIERS_Type type = new TIERS_Type(tablename,IRObject.iDecisiontable,(REntity) ef.getDecisiontables());
             if(types.containsKey(tablename)){
                 System.out.println("Multiple Decision Tables found with the name '"+types.get(tablename)+"'");
+            }else{
+                types.put(tablename, type);
             }
-            types.put(tablename, type);
         }
         
         return types;
@@ -133,7 +134,7 @@ public class TIERS_Compiler implements ICompiler {
         for(int i=0;i<typenames.length-1;i++){
             for(int j=0;j<typenames.length-1;j++){
                 RName one = (RName)typenames[j], two = (RName)typenames[j+1];
-                if(types.get(one).getType()> types.get(two).getType()){
+                if(((TIERS_Type)types.get(one)).getType()> ((TIERS_Type)types.get(two)).getType()){
                     Object hold = typenames[j];
                     typenames[j]=typenames[j+1];
                     typenames[j+1]=hold;
@@ -172,20 +173,25 @@ public class TIERS_Compiler implements ICompiler {
         
         InputStream      stream  = new ByteArrayInputStream(s.getBytes());
         DataInputStream  input   = new DataInputStream(stream);
-        DTRulesscanner   lexer   = new DTRulesscanner (input);
+        Lexer            lexer   = new Lexer (input);
                          tfilter = new TokenFilter(session, lexer,types, localtypes);
         DTRulesParser    parser  = new DTRulesParser(tfilter);
         Object           result  = null;
-        
-        parser.localCnt = localcnt;
+                
         try {
-           result = parser.parse().value;
-        }catch(Exception e){
-           throw new Exception( "Error found at Line:Char ="+lexer.linenumber()+":"+lexer.charnumber()+" "+
-                   e.toString()); 
+           Symbol ss = parser.parse();
+           if(ss == null) return "";
+           result = ss.value;
+        }catch(Throwable e) {
+           int parsed = lexer.getColumn();
+           String message = "";
+           if(parsed == 0){
+               message = "[Error here]-> ";
+           }else if (parsed >0){
+               message = s.substring(0, parsed) + " [Error here]-> " + s.substring(parsed);
+           }
+           throw new RulesException("Compile Error", "Compiling <<"+message+">>", e.toString());
         }
-        localcnt = parser.localCnt;
-        localtypes.putAll(parser.localtypes);
         return result.toString();
     }
     
@@ -219,7 +225,7 @@ public class TIERS_Compiler implements ICompiler {
      **/
     @Override
     public String compileContext(String context) throws Exception {
-        return compile("context "+context);
+        return compile("context "+context+" --EOF-- ");
     }
     
     /**
@@ -227,14 +233,14 @@ public class TIERS_Compiler implements ICompiler {
      **/
     @Override
     public String compileAction(String action) throws Exception {
-        return compile("action "+action);
+        return compile("action "+action+" --EOF-- ");
     }
     /**
      * @see com.dtrules.compiler.ICompiler#compileCondition(java.lang.String)
      **/
     @Override
     public String compileCondition(String condition) throws Exception {
-        return compile("condition "+ condition);
+        return compile("condition "+ condition +" --EOF-- ");
     }
     
     /**
@@ -258,7 +264,7 @@ public class TIERS_Compiler implements ICompiler {
                 throw new RuntimeException("Unbalanced braces: "+policyStatement);
             }
             
-            String source = "policystatement " + policyStatement.substring(s+1,e);
+            String source = "policystatement " + policyStatement.substring(s+1,e)+" --EOF-- ";
 
             try{
                 String value = compile(source);
@@ -287,7 +293,7 @@ public class TIERS_Compiler implements ICompiler {
     /**
      * @see com.dtrules.compiler.ICompiler#getTypes()
      **/
-    public HashMap<RName,ELType> getTypes() {
+    public HashMap<RName,IRType> getTypes() {
         return types;
     }
     /**
@@ -296,8 +302,8 @@ public class TIERS_Compiler implements ICompiler {
      */
     public ArrayList<String> getPossibleReferenced() {
         ArrayList<String> v = new ArrayList<String>();
-        for(ELType type :types.values()){
-            v.addAll(type.getPossibleReferenced());
+        for(IRType type :types.values()){
+            v.addAll(((TIERS_Type)type).getPossibleReferenced());
         }
         return v;
     }
@@ -306,8 +312,8 @@ public class TIERS_Compiler implements ICompiler {
      */
     public ArrayList<String> getUnReferenced() {
         ArrayList<String> v = new ArrayList<String>();
-        for(ELType type :types.values()){
-            v.addAll(type.getUnReferenced());
+        for(IRType type :types.values()){
+            v.addAll(((TIERS_Type)type).getUnReferenced());
         }
         return v;
     }   
