@@ -249,10 +249,16 @@ public class EL implements ICompiler {
         StringBuffer  sbuff = new StringBuffer();
         int s = 0;
         int e = policyStatement.indexOf("{",s);
+        boolean first = true;
         while(e>0){
             sbuff.append("\"");
             sbuff.append(policyStatement.substring(s, e));
-            sbuff.append("\" ");
+            if(first){
+            	first = false;
+            	sbuff.append("\" ");
+            }else{
+            	sbuff.append("\" s+ ");
+            }
             s = e;
             e = policyStatement.indexOf("}",s);
             if(e<0){
