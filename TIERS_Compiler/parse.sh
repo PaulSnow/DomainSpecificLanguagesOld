@@ -20,8 +20,8 @@ libDir="$project/lib"
 cd $cupDir
 echo $cupDir
 
-java -cp $libDir/java-cup-11a.jar java_cup.Main -expect 63 -parser DTRulesParser -symbols sym -dump_grammar < yparser.cup 2> bnf.txt
+java -cp $libDir/java-cup-11a.jar java_cup.Main -expect 70 -parser DTRulesParser -symbols sym -dump_grammar < yparser.cup 2> bnf.txt
 # echo create Java file
-java -cp $libDir/java-cup-11a.jar java_cup.Main  -expect 63 -compact_red -nopositions -parser DTRulesParser < yparser.cup
+java -cp $libDir/java-cup-11a.jar java_cup.Main  -expect 70 -compact_red -nopositions -parser DTRulesParser < yparser.cup
 
 cd $project 

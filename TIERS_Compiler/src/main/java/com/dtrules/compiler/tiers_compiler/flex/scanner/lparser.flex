@@ -539,7 +539,7 @@ individual{SPACES}is{SPACES}(the{SPACES}|an{SPACES})?applicant {
                        return symbol(sym.NUMBEROFTIMEPERIOD, "numberofmonths");
                  }
                                   
-    (year|month|day)
+    (year(s)?|month(s)?|day(s)?)
                  { 
                        dprint(" TIMEPERIOD["+yytext()+"] ");
                        return symbol(sym.TIMEPERIOD,yytext()+"s");

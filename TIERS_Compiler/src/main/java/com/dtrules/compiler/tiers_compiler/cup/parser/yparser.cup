@@ -768,13 +768,13 @@ foranyalloftheStmnt   ::=     boolexpr:e1 FORANYOFTHE id:rlist
              {: RESULT = e; :}
              |                 
              LESSEROF expr:e1 OR expr:e2
-             {: RESULT =  e1 + " " + e2 + " min"; :}
+             {: RESULT =  e1 + " " + e2 + " pmin"; :}
              |                          
              GREATEROF expr:e1 OR expr:e2
-             {: RESULT =  e1 + " " + e2 + " max"; :}
+             {: RESULT =  e1 + " " + e2 + " pmax"; :}
              |
              expr:e1 ROUNDED expr:e2 ORMORE
-             {: RESULT = e1 +" "+e2+" round"; :}
+             {: RESULT = e1 +" "+e2+" pround"; :}
              |
              expr:e1 SCALED INTEGER:n DECPLACES
              {: 
@@ -791,22 +791,22 @@ foranyalloftheStmnt   ::=     boolexpr:e1 FORANYOFTHE id:rlist
              :}
              |
              expr:e1 TIMES:op expr:e2
-             {: RESULT = e1+" "+e2+" "+op; :} 
+             {: RESULT = e1+" "+e2+" p* "; :} 
              | 
              expr:e1 DIVIDE:op expr:e2
-             {: RESULT = e1+" "+e2+" "+op; :} 
+             {: RESULT = e1+" "+e2+" p/ "; :} 
              | 
              expr:e1 PLUS:op expr:e2
-             {: RESULT = e1+" "+e2+" "+op; :} 
+             {: RESULT = e1+" "+e2+" p+ "; :} 
              | 
              expr:e1 PLUSSTR:op expr:e2
-             {: RESULT = e1+" "+e2+" "+op; :} 
+             {: RESULT = e1+" "+e2+" s+ "; :} 
              |
              expr:e1 MINUS:op expr:e2
-             {: RESULT = e1+" "+e2+" "+op; :} 
+             {: RESULT = e1+" "+e2+" p- "; :} 
              | 
              MINUS:op expr:e1 
-             {: RESULT = " 0 "+e1+" - "; :}
+             {: RESULT = " 0 "+e1+" p- "; :}
              %prec UNIMINUS
              |
              USING id:i 
@@ -815,7 +815,7 @@ foranyalloftheStmnt   ::=     boolexpr:e1 FORANYOFTHE id:rlist
              {: RESULT +=  e + " entitypop"; :}
              |
              NUMBEROFTIMEPERIOD:p BETWEEN expr:e1 AND expr:e2 
-             {: RESULT = e1 + " " + e2 + " " + p ; :}             
+             {: RESULT = e1 + " " + e2 + " " + p +" "; :}             
              |
              lookupExpression:e1
              {: RESULT = e1; :}                          
@@ -823,30 +823,30 @@ foranyalloftheStmnt   ::=     boolexpr:e1 FORANYOFTHE id:rlist
              expr:e1 END OF TIMEPERIOD:t
              {: 
                 if(!t.equals("months")) throw new Error("invalid syntax: "+t);
-                RESULT = e1+" endofmonth"; 
+                RESULT = e1+" endofmonth "; 
              :}
              |
              expr:e1 START OF TIMEPERIOD:t
              {: 
                 if(!t.equals("months")) throw new Error("invalid syntax: "+t);
-                RESULT = e1+" startofmonth"; 
+                RESULT = e1+" firstofmonth "; 
              :}
              |
              POSSESSION:r id:i
                 {:
                     if(r.equalsIgnoreCase("sponsor")){
-                       RESULT = "{ 'bogus' { pop dup } sponsor if } >> " + i + " entitypop entitypop";
+                       RESULT = "{ 'bogus' { pop dup } sponsor if } >> " + i + " entitypop entitypop ";
                     }else{   
-                       RESULT = r + " >> "+ i +" entitypop entitypop"; 
+                       RESULT = r + " >> "+ i +" entitypop entitypop "; 
                     }
                 :}
              
              |
              id:i ARROW expr:e
-             {: RESULT = i +" entitypush "+e+" entitypop"; :}             
+             {: RESULT = i +" entitypush "+e+" entitypop "; :}             
              |
              SIZEOF id:list 
-             {: RESULT = checkRList(list) + " sizeof" ; :} 
+             {: RESULT = checkRList(list) + " length " ; :} 
              |
              deepcopyLists:id 
              {: RESULT = id ; :}
@@ -884,12 +884,12 @@ foranyalloftheStmnt   ::=     boolexpr:e1 FORANYOFTHE id:rlist
                 |
                 SUMOFEACH id:i1 FORALL id:i2 WHERE bexpression:test
                 {:
-                   RESULT = "0 { { "+i1+" + } "+test+" if } "+i2+" for";
+                   RESULT = "0 { { "+i1+" p+ } "+test+" if } "+i2+" for";
                 :}
 		        |
 		        SUMOFEACH id:i1 FORALL id:i2
                 {:
-                   RESULT = "0 { "+i1+" + } "+i2+" for";
+                   RESULT = "0 { "+i1+" p+ } "+i2+" for";
                 :}
                 ; 
 
@@ -937,7 +937,7 @@ foranyalloftheStmnt   ::=     boolexpr:e1 FORANYOFTHE id:rlist
 
   commaListExpr ::= expr:id COMMA commaListExpr:ceq
                 {:     
-                    RESULT  = id + " \",\"" + " + " + ceq + " + ";
+                    RESULT  = id + " \",\"" + " s+ " + ceq + " s+ ";
                 :}
                 |
                 expr:id
@@ -948,7 +948,7 @@ foranyalloftheStmnt   ::=     boolexpr:e1 FORANYOFTHE id:rlist
   commaPhrase ::= expr:e1 EQUALS:op expr:e2 
                 {:  
                     firstexp = e1;
-                    RESULT = e1 +" "+ e2 +" == "; 
+                    RESULT = e1 +" "+ e2 +" p== "; 
                 :}
                 COMMA commaexpr:ceq
                 {: RESULT += ceq;:}
@@ -956,7 +956,7 @@ foranyalloftheStmnt   ::=     boolexpr:e1 FORANYOFTHE id:rlist
                 LISTEQUALS expr:e1 EQUALS:op expr:e2 
                 {:  
                     firstexp = e1;
-                    RESULT = e1 +" "+ e2 +" == "; 
+                    RESULT = e1 +" "+ e2 +" p== "; 
                 :}
                 COMMA commaexpr:ceq
                 {: RESULT += ceq; :}
@@ -967,42 +967,42 @@ foranyalloftheStmnt   ::=     boolexpr:e1 FORANYOFTHE id:rlist
               
   boolexpr  ::= TRUEIF boolexpr:b
                 {: RESULT = b; :}
-		    |
+                |
                 FALSEIF boolexpr:b
-                {: RESULT = b + " !"; :}
+                {: RESULT = b + " ! "; :}
                 |
                 expr:e1 LESSTHAN:op expr:e2
-                {: RESULT = e1 + " " + e2 + " " + op; :}
+                {: RESULT = e1 + " " + e2 + " p<"; :}
                 |
                 expr:e1 GREATERTHAN:op expr:e2
-                {: RESULT = e1 + " " + e2 + " " + op; :}                                
+                {: RESULT = e1 + " " + e2 + " p>"; :}                                
                 |
                 commaPhrase:cp
                 {: RESULT = cp;  :}
                 |                
                 expr:e1 EQUALS:op expr:e2
-                {: RESULT = e1 + " " + e2 + " " + op; :}
+                {: RESULT = e1 + " " + e2 + " p== "; :}
                 |
                 expr:e1 NOTEQUALS:op expr:e2
-                {: RESULT = e1 + " " + e2 + " " + op; :}
+                {: RESULT = e1 + " " + e2 + " p!= "; :}
                 |
                 expr:e1 GREATERTHANEQUALS:op expr:e2
-                {: RESULT = e1 + " " + e2 + " " + op; :}
+                {: RESULT = e1 + " " + e2 + " p>= "; :}
                 |
                 expr:e1 LESSTHANEQUALS:op expr:e2
-                {: RESULT = e1 + " " + e2 + " " + op; :}
+                {: RESULT = e1 + " " + e2 + " p<= "; :}
                 |                
                 boolexpr:b1 EQUALS:op boolexpr:b2
-                {: RESULT = b1 + " " + b2 + " " + op; :}
+                {: RESULT = b1 + " " + b2 + " p== "; :}
                 |
                 boolexpr:b1 AND:op boolexpr:b2
-                {: RESULT = b1 + " " + b2 + " " + op; :}
+                {: RESULT = b1 + " " + b2 + " && "; :}
                 |
                 boolexpr:b1 OR:op boolexpr:b2
-                {: RESULT = b1 + " " + b2 + " " + op; :}
+                {: RESULT = b1 + " " + b2 + " || "; :}
                 |
                 NOT:op boolexpr:b
-                {: RESULT = b + " !"; :}
+                {: RESULT = b + " ! "; :}
                 |
                 whohasaTest:exp 
                 {: RESULT = exp; :}
@@ -1049,7 +1049,7 @@ foranyalloftheStmnt   ::=     boolexpr:e1 FORANYOFTHE id:rlist
                 DATEMODIFIER:m  boolexpr:e 
                 {: RESULT = m + " " + e +" setday "; :} 
                 |
-                expr:b ABSOLUTETIME:t
+                expr:b ABSOLUTETIME:t               // Not Parsed ... Not sure what is expected here.
                 {:                 
                    RESULT = b +" " + t ;
                 :}             
