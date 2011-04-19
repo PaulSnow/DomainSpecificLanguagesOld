@@ -140,12 +140,12 @@ string     = {stringdbl}|{stringsgl}
   ">="|"&gt="      {return build(sym.GTE); }
   "<="|"&lt="      {return build(sym.LTE); }
   
-  "is"{ws}+"equal"{ws}+"to"{ws}+"ignore"{ws}+"case"              {return build(sym.EQ_IGNORE_CASE);}  
-  "is"{ws}+"not"{ws}+"equal"{ws}+"to"{ws}+"ignore"{ws}+"case"    {return build(sym.NEQ_IGNORE_CASE);}  
-  "is"{ws}+"equal"{ws}+"to"                                      {return build(sym.EQ);}
-  "equal"{ws}+"to"                                               {return build(sym.EQ);}
-  "is"{ws}+"not"{ws}+"equal"{ws}+"to"                            {return build(sym.NEQ);}
-  "not"{ws}+"equal"{ws}+"to"                                     {return build(sym.NEQ);}
+  "is"{ws}+"equal"{ws}+("to"{ws})?+"ignore"{ws}+"case"                      {return build(sym.EQ_IGNORE_CASE);}  
+  "is"{ws}+"not"{ws}+"equal"{ws}+("to"{ws})?+{ws}+"ignore"{ws}+"case"       {return build(sym.NEQ_IGNORE_CASE);}  
+  "is"{ws}+"equal"{ws}+("to"{ws})?                                          {return build(sym.EQ);}
+  "equal"{ws}+("to"{ws})?                                                   {return build(sym.EQ);}
+  "is"{ws}+"not"{ws}+"equal"{ws}+("to"{ws})?                                {return build(sym.NEQ);}
+  "not"{ws}+"equal"{ws}+("to"{ws})?                                         {return build(sym.NEQ);}
   "is"{ws}+"greater"{ws}+"than"                                  {return build(sym.GT);}
   "greater"{ws}+"than"                                           {return build(sym.GT);}
   "is"{ws}+"greater"{ws}+"than"{ws}+"or"{ws}+"equal"+{ws}+"to"   {return build(sym.GTE);}
