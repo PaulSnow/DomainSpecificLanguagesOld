@@ -211,6 +211,8 @@ done ::= ACTION statement_list:e                   {: RESULT = "\n"+e+"\n"; :}
       |
       CONTEXT context_for_table:e             SEMI {: RESULT = "\n"+e+"\n"; :} 
       |
+      CONTEXT context_for_table:e             SEMI {: RESULT = "\n"+e+"\n"; :} 
+      |
       POLICYSTATEMENT strexpr:e               SEMI {: RESULT = e; :}
       |
       POLICYSTATEMENT nexpr:e                 SEMI {: RESULT = e; :}
@@ -262,7 +264,8 @@ colonRef      ::= possessiveRef:e                             {: RESULT = e; :} 
 forallblock ::= block:blk forallctl:ctl 
 				  {: RESULT = "{ "+blk+"} "+ctl+"pop "; :};
 
-context_for_table ::= forctl:ctl            {: RESULT = ctl+"pop ";              :} |
+context_for_table ::= debugstatement:e      {: RESULT = e+"execute ";            :} |
+					  forctl:ctl            {: RESULT = ctl+"pop ";              :} |
                       forallctl:ctl 		{: RESULT = ctl+"pop "; 			 :} |
 					  forfirstctl:ctl 		{: RESULT = ctl+"pop "; 			 :} |
 					  contextstatement:c 	{: RESULT = c +"execute entitypop "; :} |
@@ -469,7 +472,15 @@ debugstatement ::=
               DEBUG fexpr:s               {: RESULT = s+"debug "; :} |
               DEBUG eexpr:s               {: RESULT = s+"debug "; :} |
               DEBUG dexpr:s               {: RESULT = s+"debug "; :} |
-              DEBUG array_expr:s          {: RESULT = s+"debug "; :} ;
+              DEBUG array_expr:s          {: RESULT = s+"debug "; :} |
+              
+              PRINT strexpr:s             {: RESULT = s+"debug "; :} |
+              PRINT bexpr:s               {: RESULT = s+"debug "; :} |
+              PRINT iexpr:s               {: RESULT = s+"debug "; :} |
+              PRINT fexpr:s               {: RESULT = s+"debug "; :} |
+              PRINT eexpr:s               {: RESULT = s+"debug "; :} |
+              PRINT dexpr:s               {: RESULT = s+"debug "; :} |
+              PRINT array_expr:s          {: RESULT = s+"debug "; :} ;
 
 
 ifblock     ::= bexpr:b THEN statement_list:e1 ifcontinue:e2 
